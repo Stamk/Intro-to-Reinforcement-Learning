@@ -2,12 +2,13 @@
 import numpy as np
 import random
 import time
+import copy
 
 #constants for board setting
 BOARD_ROWS = 3
 BOARD_COLS = 4
 NUM_OF_STATES = BOARD_ROWS * BOARD_COLS
-NUM_OF_EPISODES = 5000
+NUM_OF_EPISODES = 50000
 WIN_STATE = (0, 3)
 LOSE_STATE = (1, 3)
 START_STATE=(2,0)
@@ -16,7 +17,7 @@ START_STATE=(2,0)
 alpha = 0.7
 gamma = 0.85
 epsilon = 0.25
-threshold = 0.0001
+
 
 class Agent:
 
@@ -28,15 +29,22 @@ class Agent:
         self.reward_table[2][3] = 1
         self.reward_table[6][3] = -1
         self.reward_table[11][0] = -1
-        # initialize Q values table
+        # initialize Q table
         self.q_table = np.zeros([NUM_OF_STATES, len(self.actions)])
-        #initialize  Cumulative Reward
+        #initialize Cumulative Reward
         self.cum_reward=0
 
-    def Q_values(self,flag=0):
-        #q_table_updated = np.zeros([NUM_OF_STATES, len(self.actions)])  # copy of Q-table for converge condition
+    def Q_values(self,str):
+        # copy of Q-table for converge condition
+        q_table_updated = np.zeros([NUM_OF_STATES, len(self.actions)])
+        # set the conditions for converge in each case.
+        if str == "Q-learning":
+            threshold = 0.0001
+            samples = 100
+        elif str == "SARSA":
+            threshold = 2
+            samples = 500
         for i in range(1, NUM_OF_EPISODES):
-            reward =  0
             done = False
             self.state = START_STATE
             while not done:
@@ -45,12 +53,13 @@ class Agent:
               q_index=self.giveQindex()
               old_q_value = self.q_table[q_index][action]
               self.state = self.next_Position_mapped(action)
+              self.next_Position_mapped(action)
               next_q_index=self.giveQindex()
               reward = self.reward_table[q_index][action]
-              if flag==1:
+              if str == "Q-learning":
                 # Q-learning update
                 next_q_value = np.max(self.q_table[next_q_index])
-              else:
+              elif str == "SARSA":
                 # SARSA update
                 next_action=self.takeAnAction()
                 next_action = self.checkIfActionIsValid(next_action)
@@ -59,14 +68,15 @@ class Agent:
               self.q_table[q_index][action] = new_q_value
               done = self.isDoneFunc()   #check if state is final
             self.cum_reward +=  reward
-            #if self.chechConverge(q_table_updated) :
-            #    break
-            #q_table_updated=self.q_table
+            if i%samples==0:
+                if self.chechConverge(q_table_updated,threshold):
+                    break
+                q_table_updated = copy.deepcopy(self.q_table)
         print("Training finished.\n")
-        print("Total episodes:", NUM_OF_EPISODES, "\n")
+        print("Total episodes:", i, "\n")
         print("Cumulative reward:",self.cum_reward,"\n")
-        print("Performance:", self.cum_reward/NUM_OF_EPISODES,"\n")
-        np.set_printoptions(formatter={'float': lambda x: " {0:0.3f}".format(x)})
+       # print("Performance:", self.cum_reward/NUM_OF_EPISODES,"\n")
+        np.set_printoptions(formatter={'float': lambda x: " {0:0.3f} ".format(x)})
         print(self.actions)
         print(self.q_table)
 
@@ -104,7 +114,7 @@ class Agent:
             return 3
 
     def next_Position_mapped(self, action):
-        #next state in the board
+        # next state in the board
         if action == 0:
             nxtState = (self.state[0] - 1, self.state[1])
         elif action == 1:
@@ -113,12 +123,12 @@ class Agent:
             nxtState = (self.state[0], self.state[1] - 1)
         else:
             nxtState = (self.state[0], self.state[1] + 1)
-        #check if next state is valid
+        # check if next state is valid
         if (nxtState[0] >= 0) and (nxtState[0] <= 2):
             if (nxtState[1] >= 0) and (nxtState[1] <= 3):
                 if nxtState != (1, 1):
                     return nxtState
-        #otherwise return the current state
+        # otherwise return the current state
         return self.state
 
     def isDoneFunc(self):
@@ -126,10 +136,9 @@ class Agent:
         if (self.state == WIN_STATE) or (self.state == LOSE_STATE):
             return True
 
-    def chechConverge(self,q_table_updated):
+    def chechConverge(self,q_table_updated,threshold):
         converge = False
         difference = np.sum(abs(self.q_table - q_table_updated))
-       #difference = np.max(abs(self.q_table - q_table_updated))
         if difference < threshold:
             converge = True
         return converge
