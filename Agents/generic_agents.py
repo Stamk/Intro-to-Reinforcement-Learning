@@ -1,68 +1,58 @@
-import math
+from copy import deepcopy
+from matplotlib import pyplot as plt
 import numpy as np
-import gym
 
 
-class Discretize(gym.ObservationWrapper):
+class Agent():
 
-    def __init__(self, env, stepsize=4, threshold=5):
-        super(Discretize, self).__init__(env)
-        self.stepsize = stepsize
-        for i in range(0, self.env.observation_space.shape[0]):
-            if self.env.observation_space.high[i] > threshold:
-                self.env.observation_space.high[i] = threshold
-                self.env.observation_space.low[i] = -threshold
-        # self.env.observation_space = gym.spaces.MultiDiscrete
-        self.bins = np.linspace(self.env.observation_space.low, self.env.observation_space.high, self.stepsize + 1)
-        print(self.bins)
+    def __init__(self, env, num_episodes, gamma):
+        self.env = env
+        self.num_episodes = num_episodes
+        self.gamma = gamma
 
-    def observation(self, observation):
-        for i in range(0, self.env.observation_space.shape[0]):
-          observation[i] = np.digitize(observation[i], self.bins[:,i]) -1 #return observation as index for Q-table
-        return tuple(observation.astype(int))
+    def train(self):
+        self.total_rewards = np.zeros(self.num_episodes)
+        for i in range(self.num_episodes):
+            self.done = False
+            episode_reward = 0
+            current_state = self.env.reset()
+            self.counter = 0
+            while not self.done:
+                action = self.choose_action(current_state)
+                new_state, reward, self.done, info = self.env.step(action)
+                episode_reward += reward
+                self.update(current_state, action, new_state, reward, self.done, i,self.counter)
+                current_state = deepcopy(new_state)
+                self.counter += 1
+            self.total_rewards[i] = episode_reward
+            if i % 100 == 0: self.evaluate()
 
-    def States(self):
-        x = tuple(self.stepsize for _ in range(self.env.observation_space.shape[0])) #return States as tuple
-        return x
-'''
-    def observation(self, observation):
-        for k in range(0, self.env.observation_space.shape[1]):
-            for l in range(0, self.stepsize):
-                if (observation[k] < self.env.observation_space[l + 1][k]) and (
-                        observation[k] > self.env.observation_space[l][k]):
-                    observation[k] = l
-                    break
-        return tuple(observation.astype(int))
-'''
+    def choose_action(self, state):
+        return 1
 
-# class Scale(gym.ObservationWrapper):
+    def choose_best_action(self, state):
+        return 1
 
-#    def __init__(self, env):
-#        super(Scale, self).__init__(env)
+    def evaluate(self):
+        done = False
+        episode_reward = 0
+        current_state = self.env.reset()
+        counter = 0
+        while not done:
+            action = self.choose_best_action(current_state)
+            # self.env.render()
+            new_state, reward, done, info = self.env.step(action)
+            episode_reward += reward
+            current_state = deepcopy(new_state)
+            counter += 1
+        print("Reward on evaluation %f.4" % episode_reward)
 
-#    def observation(self, observation):
-#        return observation - 1.
+    def update(self, state, action, new_state, reward, done, current_episode=1, episode_length=1):
+        pass
 
-
-# class ReduceState(gym.ObservationWrapper):
-
-#    def __init__(self, env):
-#        super(ReduceState, self).__init__(env)
-
-#    def observation(self, observation):
-#       return observation[0]
-
-"""
-if __name__ == '__main__':
-    env = gym.make('CartPole-v0')
-    env = Discretize(env)
-    done = False
-    episode_reward = 0
-    current_state = env.reset()
-    counter = 0
-    while not done:
-        action = env.action_space.sample()
-        new_state, reward, done, info = env.step(action)
-        episode_reward += reward
-    print("Terminal reward %f.4" % episode_reward)
-"""
+    def plot(self, exp_path):
+        mean_rewards = np.zeros(self.num_episodes)
+        for i in range(self.num_episodes):
+            mean_rewards[i] = np.mean(self.total_rewards[max(0, i - 50):(i + 1)])
+        plt.plot(mean_rewards)
+        plt.savefig('%s/%s on %s for %d episodes.png' % (exp_path, self.__class__.__name__, self.env.spec.id, self.num_episodes))
