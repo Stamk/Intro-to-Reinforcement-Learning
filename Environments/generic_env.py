@@ -4,26 +4,24 @@ import gym
 
 
 class Discretize(gym.ObservationWrapper):
-
     def __init__(self, env, stepsize=4, threshold=5):
         super(Discretize, self).__init__(env)
         self.stepsize = stepsize
-        for i in range(0, self.env.observation_space.shape[0]):
-            if self.env.observation_space.high[i] > threshold:
-                self.env.observation_space.high[i] = threshold
-                self.env.observation_space.low[i] = -threshold
-        # self.env.observation_space = gym.spaces.MultiDiscrete
         self.bins = np.linspace(self.env.observation_space.low, self.env.observation_space.high, self.stepsize + 1)
-        print(self.bins)
+        obseravtions_shape = tuple(self.stepsize for _ in range(self.env.observation_space.shape[0]))
+      # self.env.observation_space = gym.spaces.Box(self.env.observation_space.low, self.env.observation_space.high,shape=(self.env.observation_space.shape[0], stepsize), dtype=np.float32)
+        self.env.observation_space = gym.spaces.MultiDiscrete(obseravtions_shape)
 
     def observation(self, observation):
         for i in range(0, self.env.observation_space.shape[0]):
           observation[i] = np.digitize(observation[i], self.bins[:,i]) -1 #return observation as index for Q-table
         return tuple(observation.astype(int))
 
-    def States(self):
-        x = tuple(self.stepsize for _ in range(self.env.observation_space.shape[0])) #return States as tuple
-        return x
+    def observation_nvec(self):
+        return tuple(self.env.observation_space.nvec)
+
+    def numOfStates(self):
+        return np.sum(self.env.observation_space.nvec)
 '''
     def observation(self, observation):
         for k in range(0, self.env.observation_space.shape[1]):
