@@ -4,24 +4,29 @@ import gym
 
 
 class Discretize(gym.ObservationWrapper):
-    def __init__(self, env, stepsize=4, threshold=5):
+    def __init__(self, env, stepsizes=[]):
         super(Discretize, self).__init__(env)
-        self.stepsize = stepsize
-        self.bins = np.linspace(self.env.observation_space.low, self.env.observation_space.high, self.stepsize + 1)
-        obseravtions_shape = tuple(self.stepsize for _ in range(self.env.observation_space.shape[0]))
+        self.stepsizes = stepsizes
+        if self.env.spec.id == 'CartPole-v0' or env.spec.id == 'CartPole-v1':
+         self.env.observation_space.high[1] = 0.5
+         self.env.observation_space.low[1] = -0.5
+         self.env.observation_space.low[3] = - math.radians(50)
+         self.env.observation_space.high[3] = math.radians(50)
+      # self.stepsizes = tuple(self.stepsize for _ in range(self.env.observation_space.shape[0]))
+        self.bins = np.empty(len(self.stepsizes), dtype=object)
+        for i in range(len(self.stepsizes)):
+            self.bins[i] = np.linspace(self.env.observation_space.low[i], self.env.observation_space.high[i], self.stepsizes[i] - 1)
       # self.env.observation_space = gym.spaces.Box(self.env.observation_space.low, self.env.observation_space.high,shape=(self.env.observation_space.shape[0], stepsize), dtype=np.float32)
-        self.env.observation_space = gym.spaces.MultiDiscrete(obseravtions_shape)
+        self.observation_space = gym.spaces.MultiDiscrete(self.stepsizes)
+        print(self.bins)
 
     def observation(self, observation):
-        for i in range(0, self.env.observation_space.shape[0]):
-          observation[i] = np.digitize(observation[i], self.bins[:,i]) -1 #return observation as index for Q-table
+        for i in range(0, self.observation_space.shape[0]):
+          observation[i] = np.digitize(observation[i], self.bins[i])  #return observation as index for Q-table
         return tuple(observation.astype(int))
 
-    def observation_nvec(self):
-        return tuple(self.env.observation_space.nvec)
-
-    def numOfStates(self):
-        return np.sum(self.env.observation_space.nvec)
+    def NumOfStates(self):
+        return np.sum(self.observation_space.nvec)
 '''
     def observation(self, observation):
         for k in range(0, self.env.observation_space.shape[1]):
