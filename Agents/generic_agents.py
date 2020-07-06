@@ -9,6 +9,7 @@ class Agent():
         self.env = env
         self.num_episodes = num_episodes
         self.gamma = gamma
+        self.gamma_initial = gamma
 
     def train(self):
         self.total_rewards = np.zeros(self.num_episodes)
@@ -21,11 +22,11 @@ class Agent():
                 action = self.choose_action(current_state)
                 new_state, reward, self.done, info = self.env.step(action)
                 episode_reward += reward
-                self.update(current_state, action, new_state, reward, self.done, i,self.counter)
+                self.done=self.update(current_state, action, new_state, reward, self.done, i,self.counter)
                 current_state = deepcopy(new_state)
                 self.counter += 1
             self.total_rewards[i] = episode_reward
-            if i % 100 == 0: self.evaluate()
+            if i % 500 == 0: self.evaluate()
 
     def choose_action(self, state):
         return 1
@@ -55,4 +56,4 @@ class Agent():
         for i in range(self.num_episodes):
             mean_rewards[i] = np.mean(self.total_rewards[max(0, i - 50):(i + 1)])
         plt.plot(mean_rewards)
-        plt.savefig('%s/%s on %s for %d episodes.png' % (exp_path, self.__class__.__name__, self.env.spec.id, self.num_episodes))
+        plt.savefig('%s/%s on %s for %d episodes with %d epsilon %d gamma %d alpha and %s stepsizes.png' % (exp_path, self.__class__.__name__, self.env.spec.id, self.num_episodes,self.epsilon_initial,self.gamma_initial,self.alpha_initial,self.env.observation_space.nvec))
