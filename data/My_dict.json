@@ -1,0 +1,36 @@
+{
+  "Agents":
+    {
+      "QAgent": {
+      "num_episodes": 3000,
+      "gamma": 0.99,
+      "epsilon": 0.9,
+      "alpha": 0.9},
+    "DQ_Agent": {
+      "num_episodes": 3000,
+      "gamma": 0.99,
+      "epsilon": 0.9,
+      "alpha": 0.9},
+    "SARSA_Agent": {
+      "num_episodes": 3000,
+      "gamma": 0.99,
+      "epsilon": 0.9,
+      "alpha": 0.9},
+    "SARSA_Expected_Agent": {
+      "num_episodes": 3000,
+      "gamma": 0.99,
+      "epsilon": 0.9,
+      "alpha": 0.9},
+    "Nsteps_agent": {
+      "num_episodes": 3000,
+      "gamma": 0.99,
+      "epsilon": 0.9,
+      "alpha": 0.9,
+      "N": 10}
+    },
+  "Environments": {
+      "CartPole-v0": {"wrappers": {"Discretize":{"stepsizes": [10,10,20,30]}}},
+      "MountainCar-v0": {"wrappers": {"Discretize":{"stepsizes":  [40,40]}}}
+    }
+
+}
