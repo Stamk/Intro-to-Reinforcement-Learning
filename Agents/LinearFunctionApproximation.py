@@ -32,8 +32,7 @@ class Linear(Agent):
             delta=reward+self.gamma*target-prediction
             feature=self.get_feature_from_state_action(state,action)
             TD_error = self.alpha * delta
-            for i in range(len(self.w)):
-             self.w[i]=self.w[i]+TD_error*feature[i]
+            self.w=self.w+TD_error*feature
             self.bias = self.bias + TD_error
             return (False or done)
 
