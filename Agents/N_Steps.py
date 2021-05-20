@@ -1,7 +1,7 @@
 import numpy as np
 import random
-from agents.generic_agents import Agent
-from agents.q_learning_agent import QAgent
+from Agents.generic_agents import Agent
+from Agents.q_learning_agent import QAgent
 
 class Nsteps_agent(QAgent):
     def __init__(self, env, num_episodes, gamma, epsilon, alpha, N):

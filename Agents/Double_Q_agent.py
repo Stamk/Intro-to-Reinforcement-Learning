@@ -1,7 +1,7 @@
 from random import random
 import numpy as np
-from agents.generic_agents import Agent
-from agents.q_learning_agent import QAgent
+from Agents.generic_agents import Agent
+from Agents.q_learning_agent import QAgent
 
 class DQ_Agent(QAgent):
 

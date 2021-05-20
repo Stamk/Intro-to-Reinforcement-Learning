@@ -1,7 +1,7 @@
 from random import random
 import numpy as np
-from agents.generic_agents import Agent
-from agents.SARSA_agent  import SARSA_Agent
+from Agents.generic_agents import Agent
+from Agents.SARSA_agent  import SARSA_Agent
 
 class SARSA_Expected_Agent(SARSA_Agent):
 

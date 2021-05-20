@@ -6,14 +6,14 @@ import matplotlib.pyplot as plt
 
 import gym
 
-from agents.q_learning_agent import QAgent
-from agents.SARSA_agent import SARSA_Agent
-from agents.SARSA_Expected import SARSA_Expected_Agent
-from agents.N_Steps import Nsteps_agent
-from agents.Double_Q_agent import DQ_Agent
-from agents.Value_iteration import ValueIteraion
-from agents.LinearFunctionApproximation import Linear
-from environments.generic_env import Discretize
+from Agents.q_learning_agent import QAgent
+from Agents.SARSA_agent import SARSA_Agent
+from Agents.SARSA_Expected import SARSA_Expected_Agent
+from Agents.N_Steps import Nsteps_agent
+from Agents.Double_Q_agent import DQ_Agent
+from Agents.LinearFunctionApproximation import Linear
+from Agents.reinforce import ReinforceAgent
+from Environments.generic_env import Discretize
  
 
 def make_envs(my_dict):

@@ -2,7 +2,7 @@ import random
 from collections import deque
 from copy import deepcopy
 import gym
-from agents.generic_agents import Agent
+from Agents.generic_agents import Agent
 import numpy as np
 
 class LogisticPolicy:

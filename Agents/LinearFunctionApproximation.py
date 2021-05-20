@@ -1,7 +1,7 @@
 import random
 import numpy as np
 import copy
-from agents.generic_agents import Agent
+from Agents.generic_agents import Agent
 from copy import deepcopy
 
 class Linear(Agent):
