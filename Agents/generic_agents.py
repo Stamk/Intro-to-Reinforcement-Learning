@@ -4,14 +4,14 @@ import numpy as np
 import math
 
 
-class Agent():
+class Agent:
 
-    def __init__(self, env, num_episodes, gamma,epsilon):
+    def __init__(self, env, num_episodes, gamma, epsilon):
         self.env = env
         self.num_episodes = num_episodes
         self.gamma = gamma
-        self.epsilon_in=epsilon
-        self.epsilon=deepcopy(epsilon)
+        self.epsilon_in = epsilon
+        self.epsilon = deepcopy(epsilon)
         self.gamma_initial = gamma
         self.results = None
 
@@ -22,29 +22,30 @@ class Agent():
             episode_reward = 0
             current_state = self.env.reset()
             self.counter = 0
-           # if i>2000 and i % 30 == 0:
-           #  self.aplha=self.alpha*0.999
-           #  self.gamma=self.gamma*0.999
-            if i% 50 == 0:
-             self.epsilon=self.epsilon*0.999
-             #self.gamma=self.gamma*1.001
+            # if i>2000 and i % 30 == 0:
+            #  self.aplha=self.alpha*0.999
+            #  self.gamma=self.gamma*0.999
+            if i % 50 == 0:
+                self.epsilon = self.epsilon * 0.999
+                # self.gamma=self.gamma*1.001
 
             while not self.done:
-                action = self.choose_action(current_state,self.epsilon)
+                action = self.choose_action(current_state, self.epsilon)
                 new_state, reward, self.done, info = self.env.step(action)
                 episode_reward += reward
-                self.done=self.update(current_state, action, new_state, reward, self.done, i,self.counter,episode_reward, self.epsilon)
+                self.done = self.update(current_state, action, new_state, reward, self.done, i, self.counter,
+                                        episode_reward, self.epsilon)
                 current_state = deepcopy(new_state)
                 self.counter += 1
             self.total_rewards[i] = episode_reward
-            if total_rewards[i]>100:
-                self.alpha=self.alpha*0.999
+            if total_rewards[i] > 100:
+                self.alpha = self.alpha * 0.999
             if i % 200 == 0:
-                print("episode",i)
+                print("episode", i)
                 self.evaluate()
-                print("epsilon",self.epsilon)
+                print("epsilon", self.epsilon)
 
-    def choose_action(self, state,epsilon):
+    def choose_action(self, state):
         return 1
 
     def choose_best_action(self, state):
@@ -57,7 +58,7 @@ class Agent():
         counter = 0
         while not done:
             action = self.choose_best_action(current_state)
-            #self.env.render()
+            # self.env.render()
             new_state, reward, done, info = self.env.step(action)
             episode_reward += reward
             current_state = deepcopy(new_state)

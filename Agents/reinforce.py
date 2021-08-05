@@ -5,22 +5,23 @@ import gym
 from Agents.generic_agents import Agent
 import numpy as np
 
+
 class LogisticPolicy:
     def __init__(self, theta, alpha, gamma):
         self.theta = theta
-        self.alpha= alpha
+        self.alpha = alpha
         self.gamma = gamma
 
     def logistic(self, y):
         # definition of logistic function
-        return 1/(1 + np.exp(-y))
+        return 1 / (1 + np.exp(-y))
 
     def probs(self, x):
         # returns probabilities of two actions
         y = x @ self.theta
         prob0 = self.logistic(y)
 
-        return np.array([prob0, 1-prob0])
+        return np.array([prob0, 1 - prob0])
 
     def act(self, x):
         # sample an action in proportion to probabilities
@@ -31,8 +32,8 @@ class LogisticPolicy:
     def grad_log_p(self, x):
         # calculate grad-log-probs
         y = x @ self.theta
-        grad_log_p0 = x - x*self.logistic(y)
-        grad_log_p1 = - x*self.logistic(y)
+        grad_log_p0 = x - x * self.logistic(y)
+        grad_log_p1 = - x * self.logistic(y)
         return grad_log_p0, grad_log_p1
 
     def grad_log_p_dot_rewards(self, grad_log_p, actions, discounted_rewards):
@@ -50,7 +51,7 @@ class LogisticPolicy:
 
     def update(self, rewards, obs, actions):
         # calculate gradients for each action over all observations
-        grad_log_p = np.array([self.grad_log_p(ob)[action] for ob,action in zip(obs,actions)])
+        grad_log_p = np.array([self.grad_log_p(ob)[action] for ob, action in zip(obs, actions)])
         assert grad_log_p.shape == (len(obs), 4)
 
         # calculate temporaly adjusted, discounted rewards
@@ -60,14 +61,14 @@ class LogisticPolicy:
         dot = self.grad_log_p_dot_rewards(grad_log_p, actions, discounted_rewards)
 
         # gradient ascent on parameters
-        self.theta += self.alpha*dot
+        self.theta += self.alpha * dot
 
 
 class ReinforceAgent(Agent):
     def __init__(self, env, num_episodes, gamma, epsilon, alpha, max_buff_size=1200, batch_size=60):
-        super(ReinforceAgent, self).__init__(env, num_episodes, gamma,epsilon)
+        super(ReinforceAgent, self).__init__(env, num_episodes, gamma, epsilon)
         obs_size = env.observation_space.low.size
-        self.env=env
+        self.env = env
         self.action_space_size = env.action_space.n
         self.epsilon = epsilon
         self.alpha = alpha
@@ -79,7 +80,7 @@ class ReinforceAgent(Agent):
     def reduce_alpha(self):
         self.alpha *= 0.99
 
-    def run_episode(self,env, policy):
+    def run_episode(self, env, policy):
         new_state = env.reset()
         totalreward = 0
         new_states = []

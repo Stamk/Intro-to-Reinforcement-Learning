@@ -3,21 +3,22 @@ import random
 from Agents.generic_agents import Agent
 from Agents.q_learning_agent import QAgent
 
+
 class Nsteps_agent(QAgent):
     def __init__(self, env, num_episodes, gamma, epsilon, alpha, N):
-         super(Nsteps_agent,self).__init__(env, num_episodes, gamma,epsilon, alpha)
-         self.N = N
-         current_state = self.env.reset()
-         action = self.choose_action(current_state)
-         self.actions = [action]
-         self.states = [current_state]
-         self.rewards = [0]
-         self.T = np.inf
+        super(Nsteps_agent, self).__init__(env, num_episodes, gamma, epsilon, alpha)
+        self.N = N
+        current_state = self.env.reset()
+        action = self.choose_action(current_state)
+        self.actions = [action]
+        self.states = [current_state]
+        self.rewards = [0]
+        self.T = np.inf
 
-       # self.states= dict{}
+    # self.states= dict{}
 
-    def update(self, state, action, new_state, reward, done, current_episode,episode_length):
-        self.store_transitions(state,action,done,episode_length)
+    def update(self, state, action, new_state, reward, done, current_episode, episode_length):
+        self.store_transitions(state, action, done, episode_length)
         tau = episode_length - self.N + 1
         self.state_action = (self.states[tau + self.N], self.actions[tau + self.N])
         if tau >= 0:
@@ -28,11 +29,12 @@ class Nsteps_agent(QAgent):
                 state_action = (self.states[tau + self.N], self.actions[tau + self.N])
                 G += np.power(self.gamma, self.N) * self.q_table[state_action[0]][state_action[1]]
             state_action = (self.states[tau], self.actions[tau])
-            self.q_table[state_action[0]][state_action[1]] += self.alpha * (G - self.q_table[state_action[0]][state_action[1]])
+            self.q_table[state_action[0]][state_action[1]] += self.alpha * (
+                    G - self.q_table[state_action[0]][state_action[1]])
         if tau == self.T - 1:
             done = True
 
-    def store_transitions(self, state,reward,done,episode_length):
+    def store_transitions(self, state, reward, done, episode_length):
         self.states.append(state)
         self.rewards.append(reward)
         if done:

@@ -14,7 +14,7 @@ from Agents.Double_Q_agent import DQ_Agent
 from Agents.LinearFunctionApproximation import Linear
 from Agents.reinforce import ReinforceAgent
 from Environments.generic_env import Discretize
- 
+
 
 def make_envs(my_dict):
     final_envs = list()
@@ -50,7 +50,6 @@ if __name__ == '__main__':
 
     config_file = 'data/My_dict.json'
 
-
     with open(config_file, 'rb') as f:
         my_dict = json.load(f)
 
@@ -66,44 +65,3 @@ if __name__ == '__main__':
 
     plot_performance(envs_agents)
     print("I m here")
-
-    # num_episodes, gamma, epsilon, alpha, N = 10000, 0.99, 0.85, 1, 5
-    # env1 = gym.make('CartPole-v0')
-    # env1 = Discretize(env1, stepsizes=[10, 10, 20, 30])
-    # ag11 = QAgent(env1, num_episodes, gamma, epsilon, alpha)
-    # ag12 = DQ_Agent(env1, num_episodes, gamma, epsilon, alpha)
-    # num_episodes, gamma, epsilon, alpha, N = 10000, 0.99, 0.85, 1, 3
-    # ag13 = SARSA_Agent(env1, num_episodes, gamma, epsilon, alpha)
-    # ag14 = SARSA_Expected_Agent(env1, num_episodes, gamma, epsilon, alpha)
-    # ag15 = Nsteps_agent(env1, num_episodes, gamma, epsilon, alpha, N)
-    #
-    # num_episodes, gamma, epsilon, alpha, N = 10000, 0.99, 0.25, 1, 3
-    # env2 = gym.make('MountainCar-v0')
-    # env2 = Discretize(env2, stepsizes=[40, 40])
-    # ag21 = QAgent(env2, num_episodes, gamma, epsilon, alpha)
-    # ag22 = DQ_Agent(env2, num_episodes, gamma, epsilon, alpha)
-    # ag23 = SARSA_Agent(env2, num_episodes, gamma, epsilon, alpha)
-    # ag24 = SARSA_Expected_Agent(env2, num_episodes, gamma, epsilon, alpha)
-    # ag25 = Nsteps_agent(env2, num_episodes, gamma, epsilon, alpha, N)
-
-    # ag11.train()
-    # ag11.plot(exp_path)
-    # ag12.train()
-    # ag12.plot(exp_path)
-    # ag13.train()
-    # ag13.plot(exp_path)
-    # ag14.train()
-    # ag14.plot(exp_path)
-    # ag15.train()
-    # ag15.plot(exp_path)
-
-    # ag21.train()
-    # ag21.plot(exp_path)
-    # ag22.train()
-    # ag22.plot(exp_path)
-    # ag23.train()
-    # ag23.plot(exp_path)
-    # ag24.train()
-    # ag24.plot(exp_path)
-    # ag25.train()
-    # ag25.plot(exp_path)
