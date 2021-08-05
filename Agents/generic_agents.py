@@ -1,49 +1,65 @@
 from copy import deepcopy
-from matplotlib import pyplot as plt
 import numpy as np
-import math
 
 
 class Agent:
-
-    def __init__(self, env, num_episodes, gamma, epsilon):
+    def __init__(self, env, num_episodes, gamma, lr=0.1, eps=0.1, anneal_lr_param=1., anneal_epsilon_param=1.,
+                 threshold_lr_anneal=100., evaluate_every_n_episodes=200):
         self.env = env
         self.num_episodes = num_episodes
         self.gamma = gamma
-        self.epsilon_in = epsilon
-        self.epsilon = deepcopy(epsilon)
         self.gamma_initial = gamma
+        self.anneal_lr_param = anneal_lr_param
+        self.anneal_epsilon_param = anneal_epsilon_param
+        self.eps = eps  # TODO eps not generic. refactor to value based
+        self.lr = lr
+        self.threshold_lr_anneal = threshold_lr_anneal
+        self.evaluate_every_n_episodes = evaluate_every_n_episodes
         self.results = None
+        self.total_rewards = None
+
+    def simulate(self, policy, train_flag=False):
+        done = False
+        cum_reward = 0.
+        state = self.env.reset()
+        while not done:
+            action = policy(state)
+            new_state, reward, done, info = self.env.step(action)
+            if train_flag: self.update(state, action, new_state, reward, done)
+            cum_reward += reward
+            state = deepcopy(new_state)
+        return cum_reward
+
+    @staticmethod
+    def linear_decay(val, param):
+        val -= param
+        return val
+
+    @staticmethod
+    def exp_decay(val, param):
+        return val * param
+
+    def anneal_lr(self, lr):
+        return self.exp_decay(lr, self.anneal_lr_param)
+
+    def anneal_eps(self, eps):
+        return self.exp_decay(eps, self.anneal_epsilon_param)
 
     def train(self):
         self.total_rewards = np.zeros(self.num_episodes)
         for i in range(self.num_episodes):
-            self.done = False
-            episode_reward = 0
-            current_state = self.env.reset()
-            self.counter = 0
-            # if i>2000 and i % 30 == 0:
-            #  self.aplha=self.alpha*0.999
-            #  self.gamma=self.gamma*0.999
-            if i % 50 == 0:
-                self.epsilon = self.epsilon * 0.999
-                # self.gamma=self.gamma*1.001
-
-            while not self.done:
-                action = self.choose_action(current_state, self.epsilon)
-                new_state, reward, self.done, info = self.env.step(action)
-                episode_reward += reward
-                self.done = self.update(current_state, action, new_state, reward, self.done, i, self.counter,
-                                        episode_reward, self.epsilon)
-                current_state = deepcopy(new_state)
-                self.counter += 1
+            episode_reward = self.simulate(policy=self.choose_action, train_flag=True)
+            self.update_after_ep()
             self.total_rewards[i] = episode_reward
-            if total_rewards[i] > 100:
-                self.alpha = self.alpha * 0.999
-            if i % 200 == 0:
+            self.eps = self.anneal_eps(self.eps)
+            if episode_reward > self.threshold_lr_anneal:
+                self.lr = self.anneal_lr(self.lr)
+            if i % self.evaluate_every_n_episodes == 0:
                 print("episode", i)
                 self.evaluate()
-                print("epsilon", self.epsilon)
+
+    def update_after_ep(self):
+        pass
 
     def choose_action(self, state):
         return 1
@@ -52,30 +68,15 @@ class Agent:
         return 1
 
     def evaluate(self):
-        done = False
-        episode_reward = 0
-        current_state = self.env.reset()
-        counter = 0
-        while not done:
-            action = self.choose_best_action(current_state)
-            # self.env.render()
-            new_state, reward, done, info = self.env.step(action)
-            episode_reward += reward
-            current_state = deepcopy(new_state)
-            counter += 1
-        print("Reward on evaluation %f.4" % episode_reward)
+        episode_reward = self.simulate(policy=self.choose_best_action)
+        print("Reward on evaluation %.2f" % episode_reward)
 
-    def update(self, state, action, new_state, reward, done, current_episode=1, episode_length=1):
-        return done
+    def update(self, state, action, new_state, reward, done):
+        pass
 
     def save(self):
         mean_rewards = np.zeros(self.num_episodes)
-        for i in range(self.num_episodes):
-            mean_rewards[i] = np.mean(self.total_rewards[max(0, i - 50):(i + 1)])
+        if self.total_rewards is not None:
+            for i in range(self.num_episodes):
+                mean_rewards[i] = np.mean(self.total_rewards[max(0, i - 50):(i + 1)])  # TODO hardcoded
         self.results = mean_rewards
-        # plt.plot(mean_rewards)
-        # plt.savefig('%s/%s on %s for %d episodes with %d epsilon %d gamma %d alpha and %s stepsizes.png' % (exp_path, self.__class__.__name__, self.env.spec.id, self.num_episodes,self.epsilon_initial,self.gamma_initial,self.alpha_initial,self.env.observation_space.nvec))
-
-    @staticmethod
-    def exp_decay(lr):
-        return lr * 0.99

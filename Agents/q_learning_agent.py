@@ -1,54 +1,30 @@
 import random
 import numpy as np
-import copy
 from Agents.generic_agents import Agent
 
 
 class QAgent(Agent):
 
-    def __init__(self, env, num_episodes, gamma, epsilon, alpha):
-        super(QAgent,self).__init__(env, num_episodes, gamma)
-        self.epsilon = epsilon
-        self.epsilon_initial = epsilon
-        self.alpha = alpha
-        self.alpha_initial = alpha
-        self.q_table_shape = tuple(self.env.observation_space.nvec) + (self.env.action_space.n,)
-        self.q_table = np.zeros(self.q_table_shape)
-
-    def choose_action(self, state):
-        if random.uniform(0, 1) < self.epsilon:
-            action = self.env.action_space.sample()  # Explore action space using greedypolicy
-        else:
-            action = np.argmax(self.q_table[state])  # Exploit learned values, take the best
-        return action
+    def __init__(self, env, num_episodes, gamma, lr=0.1, eps=0.1, anneal_lr_param=1., anneal_epsilon_param=1.,
+                 threshold_lr_anneal=100., evaluate_every_n_episodes=200):
+        super(QAgent, self).__init__(env, num_episodes, gamma, lr, eps, anneal_lr_param,
+                                     anneal_epsilon_param,
+                                     threshold_lr_anneal, evaluate_every_n_episodes)
+        self.q_table = np.zeros(np.concatenate((self.env.observation_space.nvec, [self.env.action_space.n])))
 
     def choose_best_action(self, state):
         action = np.argmax(self.q_table[state])
         return action
 
-    def update(self, state, action, new_state, reward,done,current_episode,episode_length):
-        if current_episode%100==0 and episode_length==1:
-            self.alpha=self.my_decay(self.alpha)
-            self.epsilon=self.exp_decay(self.epsilon)
+    def choose_action(self, state):
+        if random.uniform(0, 1) < self.eps:
+            action = self.env.action_space.sample()  # Explore action space using greedypolicy
+        else:
+            action = self.choose_best_action(state)  # Exploit learned values, take the best
+        return action
+
+    def update(self, state, action, new_state, reward, done):
         new_q_value = np.max(self.q_table[new_state])
         old_q_value = self.q_table[state][action]
-        updated_q_value = (1 - self.alpha) * old_q_value + self.alpha * (reward + self.gamma * new_q_value)
+        updated_q_value = (1 - self.lr) * old_q_value + self.lr * (reward + (self.gamma * new_q_value * (1 - done)))
         self.q_table[state][action] = updated_q_value
-        return (False or done)
-
-    @staticmethod
-    def linear_decay(lr):
-         lr=lr - 0.001
-         return lr
-
-    @staticmethod
-    def exp_decay(lr):
-        return lr * 0.99
-
-    def my_decay(self,lr):
-        lr=lr-0.01
-        return lr
-      #  return self.counter*
-
-    def exp_decay95(self,lr):
-        return lr * 0.95

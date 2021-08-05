@@ -3,12 +3,13 @@ import numpy as np
 from Agents.generic_agents import Agent
 from Agents.q_learning_agent import QAgent
 
+
 class SARSA_Agent(QAgent):
 
     def __init__(self, env, num_episodes, gamma, epsilon, alpha):
-        super(SARSA_Agent,self).__init__(env, num_episodes, gamma,epsilon, alpha)
+        super(SARSA_Agent, self).__init__(env, num_episodes, gamma, epsilon, alpha)
 
-    def update(self, state, action, new_state, reward,done,current_episode,episode_length):
+    def update(self, state, action, new_state, reward, done, current_episode, episode_length):
         new_action = self.choose_action(new_state)
         new_q_value = self.q_table[new_state][new_action]
         old_q_value = self.q_table[state][action]

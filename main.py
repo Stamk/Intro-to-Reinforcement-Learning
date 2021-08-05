@@ -5,14 +5,17 @@ from time import strftime
 import matplotlib.pyplot as plt
 
 import gym
+import RL_storage_env  #### Important to keep here
 
 from Agents.q_learning_agent import QAgent
 from Agents.SARSA_agent import SARSA_Agent
 from Agents.SARSA_Expected import SARSA_Expected_Agent
-from Agents.N_Steps import Nsteps_agent
-from Agents.Double_Q_agent import DQ_Agent
+from Agents.N_Steps import SarsaNStepsAgent, QNStepsAgent
+from Agents.Double_Q_agent import DoubleQ_Agent
 from Agents.LinearFunctionApproximation import Linear
 from Agents.reinforce import ReinforceAgent
+from Agents.random_agent import RandomAgent
+from Agents.threshold_agent import ThresholdAgent
 from Environments.generic_env import Discretize
 
 
@@ -48,7 +51,7 @@ if __name__ == '__main__':
     exp_path = "results/%s" % (datetime.now().strftime("%Y_%m_%d_%H%M%S"))
     os.makedirs(exp_path)
 
-    config_file = 'data/My_dict.json'
+    config_file = 'data/storage_thres.json'
 
     with open(config_file, 'rb') as f:
         my_dict = json.load(f)
@@ -62,6 +65,7 @@ if __name__ == '__main__':
         for agent in agents:
             agent.train()
             agent.save()
+            agent.evaluate()
 
     plot_performance(envs_agents)
     print("I m here")

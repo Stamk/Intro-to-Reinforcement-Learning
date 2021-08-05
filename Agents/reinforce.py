@@ -73,37 +73,28 @@ class ReinforceAgent(Agent):
         self.epsilon = epsilon
         self.alpha = alpha
         self.total_rewards = np.zeros(self.num_episodes)
+        self.policy = LogisticPolicy(np.random.rand(4), self.alpha, self.gamma)
+        self.states = None
+        self.actions = None
+        self.rewards = None
+        self.init_buffers()
 
-    def reduce_epsilon(self):
-        self.epsilon *= 0.99
+    def init_buffers(self):
+        self.states = []
+        self.actions = []
+        self.rewards = []
 
-    def reduce_alpha(self):
-        self.alpha *= 0.99
+    def choose_action(self, state):
+        return self.policy.act(state)
 
-    def run_episode(self, env, policy):
-        new_state = env.reset()
-        totalreward = 0
-        new_states = []
-        actions = []
-        rewards = []
-        probs = []
-        done = False
-        while not done:
-            new_states.append(new_state)
-            action, prob = policy.act(new_state)
-            new_state, reward, done, info = env.step(action)
-            totalreward += reward
-            rewards.append(reward)
-            actions.append(action)
-            probs.append(prob)
-        return totalreward, np.array(rewards), np.array(new_states), np.array(actions)
+    def update(self, state, action, new_state, reward, done):
+        self.store_transitions(state, action, reward, done)
 
-    def train(self):
-        # initialize environment and policy
-        theta = np.random.rand(4)
-        policy = LogisticPolicy(theta, self.alpha, self.gamma)
-        for i in range(self.num_episodes):
-            total_reward, rewards, observations, actions = self.run_episode(self.env, policy)
-            self.total_rewards[i] = total_reward
-            policy.update(rewards, observations, actions)
-        print(self.total_rewards)
+    def store_transitions(self, state, action, reward, done):
+        self.states.append(state)
+        self.actions.append(action)
+        self.rewards.append(reward)
+
+    def update_after_ep(self):
+        self.policy.update(self.states, self.rewards, self.actions)
+        self.init_buffers()
