@@ -22,9 +22,7 @@ from Environments.generic_env import Discretize
 def make_envs(my_dict):
     final_envs = list()
     for env_name, vals in my_dict["Environments"].items():
-        env = gym.make(env_name)
-        for wrapper, args in vals["wrappers"].items():
-            env = eval(wrapper)(env, **args)
+        env=gym.make(env_name, **vals)
         final_envs.append(env)
     return final_envs
 
@@ -51,7 +49,7 @@ if __name__ == '__main__':
     exp_path = "results/%s" % (datetime.now().strftime("%Y_%m_%d_%H%M%S"))
     os.makedirs(exp_path)
 
-    config_file = 'data/storage_thres.json'
+    config_file = 'data/storage_agent.json'
 
     with open(config_file, 'rb') as f:
         my_dict = json.load(f)
@@ -65,7 +63,7 @@ if __name__ == '__main__':
         for agent in agents:
             agent.train()
             agent.save()
-            agent.evaluate()
+           # agent.evaluate()
 
-    plot_performance(envs_agents)
+    #plot_performance(envs_agents)
     print("I m here")
