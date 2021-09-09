@@ -12,7 +12,7 @@ class QAgent(Agent):
         super(QAgent, self).__init__(env, num_episodes, gamma, lr, anneal_lr_param,threshold_lr_anneal, evaluate_every_n_episodes)
        # assert isinstance(self.env.observation_space, gym.spaces.MultiDiscrete), "Obs space not discretized"
         # TODO all agents
-        q_table_shape=(self.env.observation_space.shape) + (self.env.action_space.shape)
+        q_table_shape=np.concatenate((self.env.observation_space.nvec,self.env.action_space.nvec))
         self.q_table = np.zeros(q_table_shape)
         self.anneal_epsilon_param = anneal_epsilon_param
         self.eps = eps
@@ -26,7 +26,7 @@ class QAgent(Agent):
 
     def choose_action(self, state):
         if random.uniform(0, 1) < self.eps:
-            action = self.env.action_space.sample()  # Explore action space using greedypolicy
+            action = self.env.action_space.sample().item()  # Explore action space using greedypolicy
         else:
             action = self.choose_best_action(state)  # Exploit learned values, take the best
         self.eps = self.anneal_eps(self.eps)

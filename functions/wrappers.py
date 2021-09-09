@@ -14,14 +14,14 @@ class StateDiscretize(gym.ObservationWrapper):
 
         self.Statebins = np.empty(len(self.Statestepsizes), dtype=object)
         for i in range(len(self.Statestepsizes)):
-            self.Statebins[i] = np.linspace(self.env.observation_space.low[i], self.env.observation_space.high[i],self.Statestepsizes[i] - 1)
+            self.Statebins[i] = np.linspace(self.env.observation_space.low[i], self.env.observation_space.high[i],self.Statestepsizes[i])
         # self.env.observation_space = gym.spaces.Box(self.env.observation_space.low, self.env.observation_space.high,shape=(self.env.observation_space.shape[0], stepsize), dtype=np.float32)
         self.observation_space = gym.spaces.MultiDiscrete(self.Statestepsizes)
         print(self.Statebins)
 
     def observation(self, observation):
         for i in range(0, self.observation_space.shape[0]):
-            observation[i] = np.digitize(observation[i], self.Statebins[i])  # return observation as index for table
+            observation[i] = np.digitize(observation[i], self.Statebins[i])-1  # return observation as index for table
         return tuple(observation.astype(int))
 
 
@@ -37,11 +37,14 @@ class ActionDiscretize(gym.ActionWrapper):
 
         self.Actionbins = np.empty(len(self.Actionstepsizes), dtype=object)
         #TODO fix Actionbins for more dimensions
-        self.Actionbins = np.linspace(self.env.action_space.low[0], self.env.action_space.high[0],self.Actionstepsizes[0] - 1)        # self.env.observation_space = gym.spaces.Box(self.env.observation_space.low, self.env.observation_space.high,shape=(self.env.observation_space.shape[0], stepsize), dtype=np.float32)
+        self.Actionbins = np.linspace(self.env.action_space.low[0], self.env.action_space.high[0],self.Actionstepsizes[0])        # self.env.observation_space = gym.spaces.Box(self.env.observation_space.low, self.env.observation_space.high,shape=(self.env.observation_space.shape[0], stepsize), dtype=np.float32)
         self.action_space = gym.spaces.MultiDiscrete(self.Actionstepsizes)
         print(self.Actionbins)
 
     def action(self, action):
         #TODO fix actions for more dimensions
-        action = np.digitize(action, self.Actionbins)  # return action as index for table
+        action = np.digitize(action, self.Actionbins)-1  # return action as index for table
         return action
+
+    def step(self, action):
+        return self.env.step(self.action(self.Actionbins[action]))
