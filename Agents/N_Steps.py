@@ -10,7 +10,6 @@ class NStepsAgent(QAgent):
                                           anneal_epsilon_param,
                                           threshold_lr_anneal, evaluate_every_n_episodes)
         self.N = number_steps
-
         self.states = None
         self.actions = None
         self.rewards = None

@@ -22,3 +22,7 @@ class DoubleQ_Agent(QAgent):
             action_b = np.argmax(self.q_table_B[new_state])
             self.q_table_B[state][action] = self.q_table_B[state][action] + self.lr * (
                     reward + self.gamma * self.q_table[new_state][action_b] - self.q_table_B[state][action])
+
+    def choose_best_action(self, state):
+        action = np.argmax(self.q_table[state]+self.q_table_B[state])
+        return action

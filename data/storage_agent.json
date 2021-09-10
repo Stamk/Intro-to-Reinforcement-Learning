@@ -1,6 +1,6 @@
 {
   "Agents": {
-    "QAgent": {
+    "DoubleQ_Agent": {
       "num_episodes": 1000,
       "gamma": 0.99,
       "eps": 0.1,
