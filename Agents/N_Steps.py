@@ -51,8 +51,8 @@ class NStepsAgent(QAgent):
                 for i in range(tau+1, min(tau + self.N, self.T)):
                     G += np.power(self.gamma, i - tau - 1) * self.rewards[i]
                 if tau + self.N < self.T:
-                    state_tau_plus_n=self.states[tau+self.N]
-                    action_tau_plus_n=self.actions[tau+self.N]
+                    state_tau_plus_n=self.states[tau+self.N-1]
+                    action_tau_plus_n=self.actions[tau+self.N-1]
                     G+=np.power(self.gamma, self.N) * self.q_table[state_tau_plus_n][action_tau_plus_n] # TODO fix this
                 final_state = new_state
                 final_action = self.actions[tau + self.N-1]

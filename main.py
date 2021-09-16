@@ -1,4 +1,4 @@
-
+import time
 import json
 import os
 from datetime import datetime
@@ -15,6 +15,7 @@ from Agents.reinforce import ReinforceAgent
 from Agents.random_agent import RandomAgent
 from Agents.threshold_agent import ThresholdAgent
 from Agents.LinearFunctionApproximation_v2 import LFA_agent
+from Agents.TimeCorrelation import TimeCorAgent
 
 from functions.utils import make_envs, make_agents
 from functions.wrappers import StateDiscretize,ActionDiscretize
@@ -22,7 +23,7 @@ from functions.wrappers import StateDiscretize,ActionDiscretize
 if __name__ == '__main__':
     exp_path = "results/%s" % (datetime.now().strftime("%Y_%m_%d_%H%M%S"))
     os.makedirs(exp_path)
-
+    t_0 = time.time()
     config_file = 'data/storage_agent.json'
 
     with open(config_file, 'rb') as f:
@@ -33,10 +34,11 @@ if __name__ == '__main__':
 
     for env in envs:
         envs_agents[env] = make_agents(env, my_dict)
-
     for env, agents in envs_agents.items():
         for agent in agents:
             agent.train()
-            agent.save()
+            print("Training time: %.1f" % (time.time() - t_0))
+            agent.plot(exp_path)
+            #agent.save(exp_path)
         # agent.evaluate()
     print("I m here")

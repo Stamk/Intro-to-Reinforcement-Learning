@@ -1,12 +1,13 @@
 {
   "Agents": {
-    "SarsaNStepsAgent": {
-      "num_episodes": 1000,
+    "TimeCorAgent": {
+      "num_episodes": 300,
       "gamma": 0.99,
       "eps": 0.1,
       "lr": 0.1
     }
   },
+
   "Environments": {
     "RL_storage_env-v0": {"wrappers": {"StateDiscretize": {"stepsizes": [5,5,5]},
                                        "ActionDiscretize": {"stepsizes": [3]}}

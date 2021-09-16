@@ -48,3 +48,6 @@ class ActionDiscretize(gym.ActionWrapper):
 
     def step(self, action):
         return self.env.step(self.action(self.Actionbins[action]))
+
+    def unwrappedaction(self,action):
+        return self.Actionbins[action]
