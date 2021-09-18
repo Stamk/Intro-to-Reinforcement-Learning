@@ -52,7 +52,7 @@ class Agent:
         ax3 = plt.subplot(515, sharex=ax1)
         ax3.set_title("Rewards")
         ax3.plot(self.rewards)
-        plt.savefig('%s/%s on %s for %d episodes.png' % (exp_path, self.__class__.__name__, self.env.spec.id, self.num_episodes))
+        plt.savefig('%s/%s on %s for %d episodes with learning rate %s and gamma %s .png' % (exp_path, self.__class__.__name__, self.env.spec.id, self.num_episodes,self.lr,self.gamma))
         plt.show()
 
 

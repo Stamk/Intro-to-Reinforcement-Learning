@@ -17,7 +17,8 @@ from Agents.threshold_agent import ThresholdAgent
 from Agents.LinearFunctionApproximation_v2 import LFA_agent
 from Agents.TimeCorrelation import TimeCorAgent
 
-from functions.utils import make_envs, make_agents
+
+from functions.utils import make_envs, make_agents,save_agent,plot_performance
 from functions.wrappers import StateDiscretize,ActionDiscretize
 
 if __name__ == '__main__':
@@ -39,6 +40,8 @@ if __name__ == '__main__':
             agent.train()
             print("Training time: %.1f" % (time.time() - t_0))
             agent.plot(exp_path)
-            #agent.save(exp_path)
+            agent.save(exp_path)
+            save_agent(agent,'agent.pkl')
         # agent.evaluate()
+    plot_performance(envs_agents)
     print("I m here")
