@@ -20,12 +20,14 @@ from Agents.TimeCorrelation import TimeCorAgent
 
 from functions.utils import make_envs, make_agents,save_agent,plot_performance
 from functions.wrappers import StateDiscretize,ActionDiscretize
+from shutil import copy
 
 if __name__ == '__main__':
     exp_path = "results/%s" % (datetime.now().strftime("%Y_%m_%d_%H%M%S"))
     os.makedirs(exp_path)
     t_0 = time.time()
     config_file = 'data/storage_agent.json'
+    copy(config_file, exp_path)
 
     with open(config_file, 'rb') as f:
         my_dict = json.load(f)
@@ -40,8 +42,8 @@ if __name__ == '__main__':
             agent.train()
             print("Training time: %.1f" % (time.time() - t_0))
             agent.plot(exp_path)
-            agent.save(exp_path)
-            save_agent(agent,'agent.pkl')
+            agent.save_results()
+            save_agent(agent,exp_path)
         # agent.evaluate()
-    plot_performance(envs_agents)
+    plot_performance(envs_agents,exp_path)
     print("I m here")

@@ -13,7 +13,8 @@ from Agents.random_agent import RandomAgent
 from Agents.threshold_agent import ThresholdAgent
 from Agents.TimeCorrelation import TimeCorAgent
 from Agents.LinearFunctionApproximation_v2 import LFA_agent
-from functions.wrappers import StateDiscretize,ActionDiscretize
+from functions.wrappers import StateDiscretize, ActionDiscretize
+
 
 def make_envs(my_dict):
     final_envs = list()
@@ -33,7 +34,6 @@ def make_agents(env, my_dict):
     return final_ag
 
 
-
 def plot_performance(envs_agents, exp_path):
     for env, agents in envs_agents.items():
         plt.figure()
@@ -43,15 +43,7 @@ def plot_performance(envs_agents, exp_path):
         plt.legend()
         plt.savefig('%s/%s.png' % (exp_path, env.unwrapped.__class__.__name__))
 
-def save_agent(agent, filename):
-    with open(filename, 'wb') as outp:
-        pickle.dump(agent, outp, pickle.HIGHEST_PROTOCOL)
 
-def plot_performance(envs_agents):
-    for env, agents in envs_agents.items():
-        plt.figure()
-        plt.title(env.spec.id)
-        for agent in agents:
-            plt.plot(agent.results, label=agent.__class__.__name__)
-        plt.legend()
-        plt.savefig('%s/%s.png' % (exp_path, env.unwrapped.__class__.__name__))
+def save_agent(agent, exp_path):
+    with open(exp_path + '/' + agent.__class__.__name__ + '.pkl', 'wb') as outp:
+        pickle.dump(agent, outp, pickle.HIGHEST_PROTOCOL)
