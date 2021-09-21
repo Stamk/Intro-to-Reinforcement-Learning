@@ -9,6 +9,15 @@ from data_processing.database import load_db
 
 class Agent:
     def __init__(self, env, num_episodes, gamma, lr=0.1, anneal_lr_param=1.,threshold_lr_anneal=100., evaluate_every_n_episodes=200):
+        """
+        :param env:
+        :param num_episodes:
+        :param gamma:
+        :param lr:
+        :param anneal_lr_param:
+        :param threshold_lr_anneal:
+        :param evaluate_every_n_episodes:
+        """
         self.env = env
         self.num_episodes = num_episodes
         self.gamma = gamma
@@ -23,6 +32,11 @@ class Agent:
         self.rewards=[]
 
     def simulate(self, policy, train_flag=False):
+        """
+        :param policy:
+        :param train_flag:
+        :return:
+        """
         done = False
         cum_reward = 0.
         state = self.env.reset()
@@ -37,15 +51,25 @@ class Agent:
         return cum_reward
 
     def store_transitions(self,state,action,reward):
+        """
+        :param state:
+        :param action:
+        :param reward:
+        :return:
+        """
         self.states.append(self.env.unwrapped.state)
         self.actions.append(self.env.unwrappedaction(action))
         self.rewards.append(reward)
 
     def plot(self,exp_path):
+        """
+        :param exp_path:
+        :return:
+        """
         plt.figure()
         ax1 = plt.subplot(511)
         ax1.set_title("States")
-        ax1.plot(self.states)
+        ax1.plot((np.reshape(self.states,(self.states.__len__(),self.states[0].shape[0])))[:,0])
         ax2 = plt.subplot(513, sharex=ax1)
         ax2.set_title("Actions")
         ax2.plot(self.actions)
@@ -58,22 +82,34 @@ class Agent:
 
     @staticmethod
     def linear_decay(val, param):
+        """
+        :param val:
+        :param param:
+        :return:
+        """
         val -= param
         return val
 
     @staticmethod
     def exp_decay(val, param):
+        """
+        :param val:
+        :param param:
+        :return:
+        """
         return val * param
 
     def anneal_lr(self, lr):
         """
-
         :param lr:
         :return:
         """
         return self.exp_decay(lr, self.anneal_lr_param)
 
     def train(self):
+        """
+        :return:
+        """
         self.total_rewards = np.zeros(self.num_episodes)
         for i in range(self.num_episodes):
             episode_reward = self.simulate(policy=self.choose_action, train_flag=True)
@@ -86,22 +122,50 @@ class Agent:
                 self.evaluate()
 
     def update_after_ep(self):
+        """
+        :return:
+        """
         pass
 
     def choose_action(self, state):
+        """
+        :param state:
+        :return:
+        """
         return 1
 
     def choose_best_action(self, state):
+        """
+        :param self:
+        :param state:
+        :return:
+        """
         return 1
 
     def evaluate(self):
+        """
+        :param self:
+        :return:
+        """
         episode_reward = self.simulate(policy=self.choose_best_action)
         print("Reward on evaluation %.2f" % episode_reward)
 
     def update(self, state, action, new_state, reward, done):
+        """
+        :param state:
+        :param action:
+        :param new_state:
+        :param reward:
+        :param done:
+        :return:
+        """
         pass
 
-    def save(self,exp_path,mean_of_episodes=50):
+    def save_results(self,mean_of_episodes=50):
+        """
+        :param mean_of_episodes:
+        :return:
+        """
         mean_rewards = np.zeros(self.num_episodes)
         if self.total_rewards is not None:
             for i in range(self.num_episodes):

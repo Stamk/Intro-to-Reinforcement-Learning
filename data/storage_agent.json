@@ -12,6 +12,12 @@
       "eps": 0.1,
       "lr": 0.1
     },
+    "SARSA_Expected_Agent": {
+      "num_episodes": 300,
+      "gamma": 0.99,
+      "eps": 0.1,
+      "lr": 0.1
+    },
     "ThresholdAgent": {
       "num_episodes": 300,
       "gamma": 0.99,

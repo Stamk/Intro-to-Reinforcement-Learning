@@ -15,7 +15,6 @@ from Agents.reinforce import ReinforceAgent
 from Agents.random_agent import RandomAgent
 from Agents.threshold_agent import ThresholdAgent
 from Agents.LinearFunctionApproximation_v2 import LFA_agent
-from Agents.TimeCorrelation import TimeCorAgent
 
 
 from functions.utils import make_envs, make_agents,save_agent,plot_performance
@@ -41,8 +40,8 @@ if __name__ == '__main__':
         for agent in agents:
             agent.train()
             print("Training time: %.1f" % (time.time() - t_0))
-            agent.plot(exp_path)
             agent.save_results()
+            agent.plot(exp_path)
             save_agent(agent,exp_path)
         # agent.evaluate()
     plot_performance(envs_agents,exp_path)

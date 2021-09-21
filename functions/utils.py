@@ -1,7 +1,10 @@
 import gym
 import matplotlib.pyplot as plt
 import pickle
+from copy import deepcopy
 import RL_storage_env  #### Important to keep here
+import numpy as np
+
 from Agents.q_learning_agent import QAgent
 from Agents.SARSA_agent import SARSA_Agent
 from Agents.SARSA_Expected import SARSA_Expected_Agent
@@ -11,7 +14,6 @@ from Agents.LinearFunctionApproximation import Linear
 from Agents.reinforce import ReinforceAgent
 from Agents.random_agent import RandomAgent
 from Agents.threshold_agent import ThresholdAgent
-from Agents.TimeCorrelation import TimeCorAgent
 from Agents.LinearFunctionApproximation_v2 import LFA_agent
 from functions.wrappers import StateDiscretize, ActionDiscretize
 
@@ -39,7 +41,8 @@ def plot_performance(envs_agents, exp_path):
         plt.figure()
         plt.title(env.spec.id)
         for agent in agents:
-            plt.plot(agent.results, label=agent.__class__.__name__)
+            plt.plot(agent.results, label=agent.__class__.__name__ + ' max = ' + str(int(agent.results.max(axis=0))))
+            plt.axhline(y=agent.results.max(axis=0),linestyle='--')
         plt.legend()
         plt.savefig('%s/%s.png' % (exp_path, env.unwrapped.__class__.__name__))
 
