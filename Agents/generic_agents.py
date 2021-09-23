@@ -25,6 +25,7 @@ class Agent:
         self.lr = lr
         self.threshold_lr_anneal = threshold_lr_anneal
         self.evaluate_every_n_episodes = evaluate_every_n_episodes
+        self.episode_counter=0
         self.results = None
         self.total_rewards = None
         self.states=[]
@@ -67,13 +68,13 @@ class Agent:
         :return:
         """
         plt.figure()
-        ax1 = plt.subplot(511)
+        ax1 = plt.subplot(311)
         ax1.set_title("States")
         ax1.plot((np.reshape(self.states,(self.states.__len__(),self.states[0].shape[0])))[:,0])
-        ax2 = plt.subplot(513, sharex=ax1)
+        ax2 = plt.subplot(312, sharex=ax1)
         ax2.set_title("Actions")
         ax2.plot(self.actions)
-        ax3 = plt.subplot(515, sharex=ax1)
+        ax3 = plt.subplot(313, sharex=ax1)
         ax3.set_title("Rewards")
         ax3.plot(self.rewards)
         plt.savefig('%s/%s on %s for %d episodes with learning rate %s and gamma %s .png' % (exp_path, self.__class__.__name__, self.env.spec.id, self.num_episodes,self.lr,self.gamma))
@@ -112,6 +113,7 @@ class Agent:
         """
         self.total_rewards = np.zeros(self.num_episodes)
         for i in range(self.num_episodes):
+            self.episode_counter=i
             episode_reward = self.simulate(policy=self.choose_action, train_flag=True)
             self.update_after_ep()
             self.total_rewards[i] = episode_reward

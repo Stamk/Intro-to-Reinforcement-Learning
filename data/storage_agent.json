@@ -1,24 +1,6 @@
 {
   "Agents": {
-    "QAgent": {
-      "num_episodes": 300,
-      "gamma": 0.99,
-      "eps": 0.1,
-      "lr": 0.1
-    },
-    "SARSA_Agent": {
-      "num_episodes": 300,
-      "gamma": 0.99,
-      "eps": 0.1,
-      "lr": 0.1
-    },
-    "SARSA_Expected_Agent": {
-      "num_episodes": 300,
-      "gamma": 0.99,
-      "eps": 0.1,
-      "lr": 0.1
-    },
-    "ThresholdAgent": {
+    "ReinforceAgent": {
       "num_episodes": 300,
       "gamma": 0.99,
       "eps": 0.1,
@@ -38,7 +20,7 @@
         },
         "ActionDiscretize": {
           "stepsizes": [
-            3
+            2
           ]
         }
       }

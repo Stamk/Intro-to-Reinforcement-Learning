@@ -26,13 +26,7 @@ class LogisticPolicy:
     def act(self, x):
         # sample an action in proportion to probabilities
         probs = self.probs(x)
-        action = np.random.choice([0, 1], p=probs)
-        return action, probs[action]
-
-    def returnact(self, x):
-        # sample an action in proportion to probabilities
-        probs = self.probs(x)
-        action = np.random.choice([0, 1], p=probs)
+        action = np.random.choice([-1, 1], p=probs)
         return action
 
     def grad_log_p(self, x):
@@ -58,7 +52,7 @@ class LogisticPolicy:
     def update(self, rewards, obs, actions):
         # calculate gradients for each action over all observations
         grad_log_p = np.array([self.grad_log_p(ob)[action] for ob, action in zip(obs, actions)])
-        assert grad_log_p.shape == (len(obs), 3)
+        assert grad_log_p.shape == (len(obs), 4)
 
         # calculate temporaly adjusted, discounted rewards
         discounted_rewards = self.discount_rewards(rewards)
@@ -125,10 +119,6 @@ class  GaussianPolicy:
         # gradient ascent on parameters
         self.theta += self.lr * dot
 
-
-
-
-
 class ReinforceAgent(Agent):
     def __init__(self, env, num_episodes, gamma, eps, lr, max_buff_size=1200, batch_size=60):
         super(ReinforceAgent, self).__init__(env, num_episodes, gamma, eps)
@@ -137,29 +127,25 @@ class ReinforceAgent(Agent):
         self.eps = eps
         self.lr = lr
         self.total_rewards = np.zeros(self.num_episodes)
-        self.policy = LogisticPolicy(np.random.rand(3), self.lr, self.gamma)
-        self.states = None
-        self.actions = None
-        self.rewards = None
-        self.init_buffers()
+        self.policy = LogisticPolicy(np.random.rand(self.env.observation_space.shape[0]), self.lr, self.gamma)
+        self.init_reinforce_buffers()
 
-    def init_buffers(self):
-        self.states = []
-        self.actions = []
-        self.rewards = []
+    def init_reinforce_buffers(self):
+        self.reinforce_states = []
+        self.reinforce_actions = []
+        self.reinforce_rewards = []
 
     def choose_action(self, state):
-        return self.policy.returnact(state)
+        return self.policy.act(state)
 
     def update(self, state, action, new_state, reward, done):
-        self.store_transitions(state, action, reward, done)
-        self.policy.update(self.rewards,self.states,self.actions)
+        self.store_reinforce_transitions(state, action, reward, done)
 
-    def store_transitions(self, state, action, reward, done):
-        self.states.append(state)
-        self.actions.append(action)
-        self.rewards.append(reward)
+    def store_reinforce_transitions(self, state, action, reward, done):
+        self.reinforce_states.append(state)
+        self.reinforce_actions.append(action)
+        self.reinforce_rewards.append(reward)
 
     def update_after_ep(self):
-        self.policy.update(self.states, self.rewards, self.actions)
-        self.init_buffers()
+        self.policy.update(np.array(self.reinforce_rewards),np.array(self.reinforce_states), np.array(self.reinforce_actions))
+        self.init_reinforce_buffers()

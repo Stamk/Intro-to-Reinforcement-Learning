@@ -1,7 +1,11 @@
 {
   "Agents": {
     "ThresholdAgent": {
-      "num_episodes": 1000,
+      "num_episodes": 200,
+      "threshold": [
+        30,
+        100
+      ],
       "gamma": 0.99,
       "eps": 0.1,
       "lr": 0.1
@@ -9,10 +13,21 @@
   },
   "Environments": {
     "RL_storage_env-v0": {
-      "start_date":"1/1/2015 0:00",
-      "end_date":"1/2/2015 0:00",
-      "Dt":"15min",
-      "database":"data/Imbalance_2015_16.csv"
+      "wrappers": {
+        "StateDiscretize": {
+          "stepsizes": [
+            5,
+            5,
+            5,
+            5
+          ]
+        },
+        "ActionDiscretize": {
+          "stepsizes": [
+            3
+          ]
+        }
+      }
     }
   }
 }
