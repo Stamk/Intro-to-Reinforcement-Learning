@@ -1,7 +1,8 @@
 {
   "Agents": {
-    "ReinforceAgent": {
+    "SarsaNStepsAgent": {
       "num_episodes": 300,
+      "number_steps" : 5,
       "gamma": 0.99,
       "eps": 0.1,
       "lr": 0.1
