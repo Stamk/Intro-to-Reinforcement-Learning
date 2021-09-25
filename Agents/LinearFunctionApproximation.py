@@ -6,17 +6,16 @@ from copy import deepcopy
 
 
 class Linear(Agent):
-    def __init__(self, env, num_episodes, gamma, epsilon, alpha):
+    def __init__(self, env, num_episodes, gamma,eps=0.1, lr=0.1, anneal_lr_param=1.,
+                 threshold_lr_anneal=100., evaluate_every_n_episodes=200):
         super(Linear, self).__init__(env, num_episodes, gamma)
         # initialize weight and bias
         self.w = np.zeros([10])
         self.bias = 1
-        self.epsilon = epsilon
-        self.gamma = gamma
-        self.alpha = alpha
+        self.eps=eps
 
     def choose_action(self, state):
-        if random.uniform(0, 1) < self.epsilon:
+        if random.uniform(0, 1) < self.eps:
             action = self.env.action_space.sample()  # Explore action space using greedypolicy
         else:
             action = self.choose_best_action(state)  # Exploit learned values, take the best
@@ -24,31 +23,20 @@ class Linear(Agent):
 
     # update parameters
     def choose_best_action(self, state):
-        if self.linear_calc(state, 0) > self.linear_calc(state, 1):
-            return 0
+        if self.linear_calc(state, -1) > self.linear_calc(state, 1):
+            return -1
         else:
             return 1
 
-    def update(self, state, action, new_state, reward, done, current_episode, episode_length):
+    def update(self, state, action, new_state, reward, done):
         prediction = self.linear_calc(state, action)  # actions given state s
         new_action = self.choose_best_action(new_state)
         target = self.linear_calc(new_state, new_action)
         delta = reward + self.gamma * target - prediction
-        print(target, prediction)
-        print(delta)
         state = np.concatenate((state, np.array([1])), axis=0)
         feature = self.get_feature_from_state_action(state, action)
-        TD_error = self.alpha * delta
+        TD_error = self.lr * delta
         self.w = self.w + TD_error * feature
-        #   self.bias = self.bias + TD_error
-        #                    self.w[state, action] = self.w[state, action] - TD_error * v
-        #                self.bias = self.bias - TD_error
-        #            TD_error = self.alpha * (lqf_s_a - (reward + self.gamma * lqf_s_a_next))
-        #            if TD_error != 0.0:
-        #                for state,v in states: #i = row, a = column, v = value of the state
-        #                    self.w[state, action] = self.w[state, action] - TD_error * v
-        #                self.bias = self.bias - TD_error
-        return (False or done)
 
     # return q(s, a; w) for a given state s and action a
     def linear_calc(self, state, action):
@@ -68,10 +56,3 @@ class Linear(Agent):
             feature[i + offset] = state[i]
         # feature[-1]=self.bias
         return feature
-
-
-'''        def update_weights(self, weights, g):
-            for i in range(len(weights)):
-                for param in weights[i].keys():
-                    weights[i][param] += self.step_size * g[i][param]
-'''
