@@ -14,7 +14,7 @@ from Agents.LinearFunctionApproximation import Linear
 from Agents.reinforce import ReinforceAgent
 from Agents.random_agent import RandomAgent
 from Agents.threshold_agent import ThresholdAgent
-from Agents.LinearFunctionApproximation_v2 import LFA_agent
+# from Agents.LinearFunctionApproximation_v2 import LFA_agent
 
 
 from functions.utils import make_envs, make_agents,save_agent,plot_performance

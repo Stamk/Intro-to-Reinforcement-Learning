@@ -3,8 +3,8 @@
     "ThresholdAgent": {
       "num_episodes": 200,
       "threshold": [
-        30,
-        100
+        150,
+        80
       ],
       "gamma": 0.99,
       "eps": 0.1,
