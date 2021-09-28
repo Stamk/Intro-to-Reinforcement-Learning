@@ -17,7 +17,7 @@ from Agents.threshold_agent import ThresholdAgent
 # from Agents.LinearFunctionApproximation_v2 import LFA_agent
 
 
-from functions.utils import make_envs, make_agents,save_agent,plot_performance
+from functions.utils import make_envs, make_agents,save_agent,plot_performance,custom_hook
 from functions.wrappers import StateDiscretize,ActionDiscretize
 from shutil import copy
 
@@ -29,13 +29,12 @@ if __name__ == '__main__':
     copy(config_file, exp_path)
 
     with open(config_file, 'rb') as f:
-        my_dict = json.load(f)
-
-    envs = make_envs(my_dict)
+        data = json.load(f, object_pairs_hook=custom_hook)
+    envs = make_envs(data)
     envs_agents = dict()
 
     for env in envs:
-        envs_agents[env] = make_agents(env, my_dict)
+        envs_agents[env] = make_agents(env, data)
     for env, agents in envs_agents.items():
         for agent in agents:
             agent.train()

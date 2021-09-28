@@ -4,6 +4,7 @@ import pickle
 from copy import deepcopy
 import RL_storage_env  #### Important to keep here
 import numpy as np
+from collections import defaultdict
 
 from Agents.q_learning_agent import QAgent
 from Agents.SARSA_agent import SARSA_Agent
@@ -30,9 +31,10 @@ def make_envs(my_dict):
 
 def make_agents(env, my_dict):
     final_ag = list()
-    for ag_name, vals in my_dict["Agents"].items():
-        ag = eval(ag_name)(env, **vals)
-        final_ag.append(ag)
+    for ag_name,vals in my_dict["Agents"].items():
+        for val in vals:
+         ag = eval(ag_name)(env, **val)
+         final_ag.append(ag)
     return final_ag
 
 
@@ -50,3 +52,14 @@ def plot_performance(envs_agents, exp_path):
 def save_agent(agent, exp_path):
     with open(exp_path + '/' + agent.__class__.__name__ + '.pkl', 'wb') as outp:
         pickle.dump(agent, outp, pickle.HIGHEST_PROTOCOL)
+
+
+def custom_hook(obj):
+   # Identify dictionary with duplicate keys...
+   # If found create a separate dict with single key and val and as list.
+   if len(obj) > 1 and len(set(i for i, j in obj)) == 1:
+       data_dict = defaultdict(list)
+       for i, j in obj:
+           data_dict[i].append(j)
+       return dict(data_dict)
+   return dict(obj)

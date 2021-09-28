@@ -1,14 +1,24 @@
 {
   "Agents": {
     "ThresholdAgent": {
-      "num_episodes": 200,
+      "num_episodes": 400,
       "threshold": [
-        150,
-        80
+        -50,
+        50
       ],
       "gamma": 0.99,
       "eps": 0.1,
       "lr": 0.1
+    },
+    "ThresholdAgent": {
+      "num_episodes": 400,
+      "threshold": [
+        0,
+        10
+      ],
+      "gamma": 0.5,
+      "eps": 0.3,
+      "lr": 0.05
     }
   },
   "Environments": {

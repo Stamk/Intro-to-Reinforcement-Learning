@@ -5,9 +5,9 @@ from copy import deepcopy
 
 
 class ThresholdAgent(Agent):
-    def __init__(self, env, num_episodes, gamma, threshold=[50, 50], lr=0.1, eps=0.1, anneal_lr_param=1.,
+    def __init__(self, env, num_episodes, gamma, threshold=[0, 30], lr=0.1, eps=0.1, anneal_lr_param=1.,
                  anneal_epsilon_param=1.,
-                 threshold_lr_anneal=100., evaluate_every_n_episodes=20, method='Powell'):
+                 threshold_lr_anneal=100., evaluate_every_n_episodes=20, method='Nelder-Mead'):
         super(ThresholdAgent, self).__init__(env, num_episodes, gamma, lr, anneal_lr_param, threshold_lr_anneal,
                                              evaluate_every_n_episodes)
         self.threshold = threshold
@@ -23,18 +23,18 @@ class ThresholdAgent(Agent):
 
     def optimizer(self, x):
         res = scipy.optimize.minimize(self.eval, x, method=self.method, bounds=[[-100, 200], [-100, 200]],
-                                      options={'disp': True}, tol=0.00001)
+                                      options={'disp': True}, tol=0.0000001)
         return res.x
 
     def choose_best_action(self, state):
         action = 0
-        if self.env.unwrapped.state[-1] > self.threshold[0]:
+        if self.env.unwrapped.state[-1] > self.threshold[1]:
             action = -1
-        elif self.env.unwrapped.state[-1] < self.threshold[1]:
+        elif self.env.unwrapped.state[-1] < self.threshold[0]:
             action = 1
         return action
 
-    def eval(self, threshold, train_flag=False):
+    def eval(self, threshold):
         """
         :param policy:
         :param train_flag:
@@ -46,9 +46,9 @@ class ThresholdAgent(Agent):
         state = self.env.reset()
         while not done:
             action = 0
-            if self.env.unwrapped.state[-1] > threshold[0]:
+            if self.env.unwrapped.state[-1] > threshold[1]:
                 action = -1
-            elif self.env.unwrapped.state[-1] < threshold[1]:
+            elif self.env.unwrapped.state[-1] < threshold[0]:
                 action = 1
             new_state, reward, done, info = self.env.step(action)
             cum_reward += reward
