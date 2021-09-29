@@ -25,7 +25,7 @@ if __name__ == '__main__':
     exp_path = "results/%s" % (datetime.now().strftime("%Y_%m_%d_%H%M%S"))
     os.makedirs(exp_path)
     t_0 = time.time()
-    config_file = 'data/storage_random.json'
+    config_file = 'data/storage_agents.json'
     copy(config_file, exp_path)
 
     with open(config_file, 'rb') as f:

@@ -1,0 +1,72 @@
+{
+  "Agents": {
+    "Myqagent": {
+      "type": "QAgent",
+      "num_episodes": 400,
+      "gamma": 0.99,
+      "eps": 0.1,
+      "lr": 0.1
+    },
+    "MySarsa": {
+      "type": "SARSA_Agent",
+      "num_episodes": 400,
+      "gamma": 0.99,
+      "eps": 0.1,
+      "lr": 0.1
+    },
+    "MySarsaExpe": {
+      "type": "SARSA_Expected_Agent",
+      "num_episodes": 400,
+      "gamma": 0.99,
+      "eps": 0.1,
+      "lr": 0.1
+    },
+    "MyDoubleq": {
+      "type": "DoubleQ_Agent",
+      "num_episodes": 400,
+      "gamma": 0.99,
+      "eps": 0.1,
+      "lr": 0.1
+    },
+        "MySarsaNStepsAgent": {
+      "type": "SarsaNStepsAgent",
+      "num_episodes": 400,
+      "gamma": 0.99,
+      "number_steps": 5,
+      "eps": 0.1,
+      "lr": 0.1
+    },
+    "MyQNStepsAgent": {
+      "type": "QNStepsAgent",
+      "num_episodes": 400,
+      "gamma": 0.99,
+      "number_steps": 5,
+      "eps": 0.1,
+      "lr": 0.1
+    }
+  },
+  "Environments": {
+    "RL_storage_env-v0": {
+      "parameters": {
+        "start_date": "1/1/2015 0:00",
+        "end_date": "1/2/2015 0:00",
+        "Dt": "15min"
+      },
+      "wrappers": {
+        "StateDiscretize": {
+          "stepsizes": [
+            5,
+            5,
+            5,
+            100
+          ]
+        },
+        "ActionDiscretize": {
+          "stepsizes": [
+            3
+          ]
+        }
+      }
+    }
+  }
+}

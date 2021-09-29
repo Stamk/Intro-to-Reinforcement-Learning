@@ -6,9 +6,9 @@ from copy import deepcopy
 
 
 class Linear(Agent):
-    def __init__(self, env, num_episodes, gamma,eps=0.1, lr=0.1, anneal_lr_param=1.,
+    def __init__(self, env,name,type, num_episodes, gamma,eps=0.1, lr=0.1, anneal_lr_param=1.,
                  threshold_lr_anneal=100., evaluate_every_n_episodes=200):
-        super(Linear, self).__init__(env, num_episodes, gamma)
+        super(Linear, self).__init__(env,name,type, num_episodes, gamma)
         # initialize weight and bias
         self.w = np.zeros([10])
         self.bias = 1

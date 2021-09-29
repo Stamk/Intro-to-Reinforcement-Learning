@@ -22,7 +22,8 @@ from functions.wrappers import StateDiscretize, ActionDiscretize
 def make_envs(my_dict):
     final_envs = list()
     for env_name, vals in my_dict["Environments"].items():
-        env = gym.make(env_name)
+        param=vals["parameters"]
+        env = gym.make(env_name,**param)
         for wrapper, args in vals["wrappers"].items():
             env = eval(wrapper)(env, **args)
         final_envs.append(env)
@@ -41,11 +42,12 @@ def make_agents(env, my_dict):
 def plot_performance(envs_agents, exp_path):
     for env, agents in envs_agents.items():
         plt.figure()
-        plt.title(env.spec.id)
+        plt.title("Performance")
+        plt.suptitle("Cumulative rewards over episodes on "+env.spec.id,fontsize='small')
         for agent in agents:
             plt.plot(agent.total_rewards, label=agent.name)
         plt.legend()
-        plt.savefig('%s/%s.png' % (exp_path, env.unwrapped.__class__.__name__))
+        plt.savefig('%s/Cumulative rewards over episodes.png' % (exp_path))
 
 
 def save_agent(agent, exp_path):

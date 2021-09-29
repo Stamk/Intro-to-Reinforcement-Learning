@@ -5,10 +5,10 @@ from copy import deepcopy
 
 
 class ThresholdAgent(Agent):
-    def __init__(self, env, num_episodes, gamma, threshold=[0, 30], lr=0.1, eps=0.1, anneal_lr_param=1.,
+    def __init__(self, env, name,type,num_episodes, gamma, threshold=[0, 30], lr=0.1, eps=0.1, anneal_lr_param=1.,
                  anneal_epsilon_param=1.,
                  threshold_lr_anneal=100., evaluate_every_n_episodes=20, method='Nelder-Mead'):
-        super(ThresholdAgent, self).__init__(env, num_episodes, gamma, lr, anneal_lr_param, threshold_lr_anneal,
+        super(ThresholdAgent, self).__init__(env, name,type,num_episodes, gamma, lr, anneal_lr_param, threshold_lr_anneal,
                                              evaluate_every_n_episodes)
         self.threshold = threshold
         self.method = method
