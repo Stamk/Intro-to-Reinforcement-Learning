@@ -32,8 +32,8 @@ def make_envs(my_dict):
 def make_agents(env, my_dict):
     final_ag = list()
     for ag_name,vals in my_dict["Agents"].items():
-        for val in vals:
-         ag = eval(ag_name)(env, **val)
+         ag_type=vals["type"]
+         ag = eval(ag_type)(env,ag_name, **vals)
          final_ag.append(ag)
     return final_ag
 
@@ -43,14 +43,13 @@ def plot_performance(envs_agents, exp_path):
         plt.figure()
         plt.title(env.spec.id)
         for agent in agents:
-            plt.plot(agent.results, label=agent.__class__.__name__ + ' max = ' + str(int(agent.results.max(axis=0))))
-            plt.axhline(y=agent.results.max(axis=0),linestyle='--')
+            plt.plot(agent.total_rewards, label=agent.name)
         plt.legend()
         plt.savefig('%s/%s.png' % (exp_path, env.unwrapped.__class__.__name__))
 
 
 def save_agent(agent, exp_path):
-    with open(exp_path + '/' + agent.__class__.__name__ + '.pkl', 'wb') as outp:
+    with open(exp_path + '/' + agent.name + '.pkl', 'wb') as outp:
         pickle.dump(agent, outp, pickle.HIGHEST_PROTOCOL)
 
 

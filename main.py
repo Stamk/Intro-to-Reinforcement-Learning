@@ -25,11 +25,11 @@ if __name__ == '__main__':
     exp_path = "results/%s" % (datetime.now().strftime("%Y_%m_%d_%H%M%S"))
     os.makedirs(exp_path)
     t_0 = time.time()
-    config_file = 'data/storage_thres.json'
+    config_file = 'data/storage_random.json'
     copy(config_file, exp_path)
 
     with open(config_file, 'rb') as f:
-        data = json.load(f, object_pairs_hook=custom_hook)
+        data = json.load(f)
     envs = make_envs(data)
     envs_agents = dict()
 

@@ -8,7 +8,7 @@ from data_processing.database import load_db
 
 
 class Agent:
-    def __init__(self, env, num_episodes, gamma, lr=0.1, anneal_lr_param=1.,threshold_lr_anneal=100., evaluate_every_n_episodes=200):
+    def __init__(self, env,name,type, num_episodes, gamma, lr=0.1, anneal_lr_param=1.,threshold_lr_anneal=100., evaluate_every_n_episodes=200):
         """
         :param env:
         :param num_episodes:
@@ -18,6 +18,8 @@ class Agent:
         :param threshold_lr_anneal:
         :param evaluate_every_n_episodes:
         """
+        self.name=name
+        self.type=type
         self.env = env
         self.num_episodes = num_episodes
         self.gamma = gamma
@@ -77,7 +79,7 @@ class Agent:
         ax3 = plt.subplot(313, sharex=ax1)
         ax3.set_title("Rewards")
         ax3.plot(self.rewards)
-        plt.savefig('%s/%s on %s for %d episodes with learning rate %s and gamma %s .png' % (exp_path, self.__class__.__name__, self.env.spec.id, self.num_episodes,self.lr,self.gamma))
+        plt.savefig('%s agent of type %s %s on %s for %d episodes with learning rate %s and gamma %s .png' % (exp_path, self.name,self.type, self.env.spec.id, self.num_episodes,self.lr,self.gamma))
         plt.show()
 
 
