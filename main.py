@@ -33,8 +33,8 @@ if __name__ == '__main__':
     envs = make_envs(data)
     envs_agents = dict()
 
-    for env in envs:
-        envs_agents[env] = make_agents(env, data)
+    for env_name,env in envs.items():
+        envs_agents[env_name] = make_agents(env, data)
     for env, agents in envs_agents.items():
         for agent in agents:
             agent.train()

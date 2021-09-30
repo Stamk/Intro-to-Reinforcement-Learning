@@ -20,22 +20,27 @@ from functions.wrappers import StateDiscretize, ActionDiscretize
 
 
 def make_envs(my_dict):
-    final_envs = list()
+    final_envs = dict()
     for env_name, vals in my_dict["Environments"].items():
-        param=vals["parameters"]
-        env = gym.make(env_name,**param)
-        for wrapper, args in vals["wrappers"].items():
-            env = eval(wrapper)(env, **args)
-        final_envs.append(env)
+        envir = list()
+        for params in ["train_parameters", "test_parameters"]:
+            env = gym.make(env_name, **vals[params])
+            envir.append(env)
+        wrapped_env = list()
+        for env in envir:
+            for wrapper, args in vals["wrappers"].items():
+                env = eval(wrapper)(env, **args)
+            wrapped_env.append(env)
+        final_envs[env_name] = wrapped_env
     return final_envs
 
 
 def make_agents(env, my_dict):
     final_ag = list()
-    for ag_name,vals in my_dict["Agents"].items():
-         ag_type=vals["type"]
-         ag = eval(ag_type)(env,ag_name, **vals)
-         final_ag.append(ag)
+    for ag_name, vals in my_dict["Agents"].items():
+        ag_type = vals["type"]
+        ag = eval(ag_type)(env, ag_name, **vals)
+        final_ag.append(ag)
     return final_ag
 
 
@@ -43,7 +48,7 @@ def plot_performance(envs_agents, exp_path):
     for env, agents in envs_agents.items():
         plt.figure()
         plt.title("Performance")
-        plt.suptitle("Cumulative rewards over episodes on "+env.spec.id,fontsize='small')
+        plt.suptitle("Cumulative rewards over episodes on " + env.spec.id, fontsize='small')
         for agent in agents:
             plt.plot(agent.total_rewards, label=agent.name)
         plt.legend()
@@ -56,11 +61,11 @@ def save_agent(agent, exp_path):
 
 
 def custom_hook(obj):
-   # Identify dictionary with duplicate keys...
-   # If found create a separate dict with single key and val and as list.
-   if len(obj) > 1 and len(set(i for i, j in obj)) == 1:
-       data_dict = defaultdict(list)
-       for i, j in obj:
-           data_dict[i].append(j)
-       return dict(data_dict)
-   return dict(obj)
+    # Identify dictionary with duplicate keys...
+    # If found create a separate dict with single key and val and as list.
+    if len(obj) > 1 and len(set(i for i, j in obj)) == 1:
+        data_dict = defaultdict(list)
+        for i, j in obj:
+            data_dict[i].append(j)
+        return dict(data_dict)
+    return dict(obj)
