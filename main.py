@@ -32,14 +32,13 @@ if __name__ == '__main__':
         data = json.load(f)
     envs = make_envs(data)
     envs_agents = dict()
-
     for env_name,env in envs.items():
         envs_agents[env_name] = make_agents(env, data)
     for env, agents in envs_agents.items():
         for agent in agents:
             agent.train()
             print("Training time: %.1f" % (time.time() - t_0))
-            agent.save_results()
+           # agent.save_results()
             agent.plot(exp_path)
             save_agent(agent,exp_path)
         # agent.evaluate()

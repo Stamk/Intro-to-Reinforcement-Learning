@@ -6,28 +6,28 @@ from Agents.generic_agents import Agent
 
 
 class QAgent(Agent):
-    def __init__(self, env,name,type, num_episodes, gamma, lr=0.1, eps=0.1, anneal_lr_param=1., anneal_epsilon_param=1.,
-                 threshold_lr_anneal=100., evaluate_every_n_episodes=200):
-        super(QAgent, self).__init__(env,name,type, num_episodes, gamma, lr, anneal_lr_param, evaluate_every_n_episodes)
-        assert isinstance(self.env.observation_space, gym.spaces.MultiDiscrete), "Obs space not discretized"
+    def __init__(self, envs,name,type, num_episodes, gamma, lr=0.1, eps=0.1, anneal_lr_param=1., anneal_epsilon_param=1.,
+                 threshold_lr_anneal=100., evaluate_every_n_episodes=20):
+        super(QAgent, self).__init__(envs,name,type, num_episodes, gamma, lr, anneal_lr_param, evaluate_every_n_episodes)
+        assert isinstance(self.train_env.observation_space, gym.spaces.MultiDiscrete), "Obs space not discretized"
         # TODO all agents
-        q_table_shape=np.concatenate((self.env.observation_space.nvec,self.env.action_space.nvec))
+        q_table_shape=np.concatenate((self.train_env.observation_space.nvec,self.train_env.action_space.nvec))
         self.q_table = np.zeros(q_table_shape)
         self.anneal_epsilon_param = anneal_epsilon_param
         self.eps = eps
 
-    def choose_best_action(self, state):
+    def choose_best_action(self, state, env):
         action = np.argmax(self.q_table[state])
         return action
 
     def anneal_eps(self, eps):
         return self.exp_decay(eps, self.anneal_epsilon_param)
 
-    def choose_action(self, state):
+    def choose_action(self, state, env):
         if random.uniform(0, 1) < self.eps:
-            action = self.env.action_space.sample().item()  # Explore action space using greedypolicy
+            action = env.action_space.sample().item()  # Explore action space using greedypolicy
         else:
-            action = self.choose_best_action(state)  # Exploit learned values, take the best
+            action = self.choose_best_action(state,env)  # Exploit learned values, take the best
         self.eps = self.anneal_eps(self.eps)
         return action
 

@@ -4,10 +4,10 @@ from Agents.q_learning_agent import QAgent
 
 
 class NStepsAgent(QAgent):
-    def __init__(self, env, name,type,num_episodes, gamma, number_steps=1, lr=0.1, eps=0.1, anneal_lr_param=1.,
+    def __init__(self, envs, name,type,num_episodes, gamma, number_steps=1, lr=0.1, eps=0.1, anneal_lr_param=1.,
                  anneal_epsilon_param=1.,
                  threshold_lr_anneal=100., evaluate_every_n_episodes=200):
-        super(NStepsAgent, self).__init__(env, name,type,num_episodes, gamma, lr, eps, anneal_lr_param,
+        super(NStepsAgent, self).__init__(envs, name,type,num_episodes, gamma, lr, eps, anneal_lr_param,
                                           anneal_epsilon_param,
                                           threshold_lr_anneal, evaluate_every_n_episodes)
         self.N = number_steps
@@ -19,7 +19,7 @@ class NStepsAgent(QAgent):
         self.buffer_rewards = [0]
 
 
-    def simulate(self, policy, train_flag=False):
+    def simulate(self, policy, train_flag=False,eval_flag=False):
         """
         :param policy:
         :param train_flag:
@@ -28,14 +28,15 @@ class NStepsAgent(QAgent):
         done = False
         cum_reward = 0.
         reward=0.
-        state = self.env.reset()
+        env = self.test_env if eval_flag else self.train_env
+        state = env.reset()
         t=0
         self.T=np.inf
         while not done:
             tau = t - self.N + 1
-            action = policy(state)
+            action = policy(state,env)
             self.store_buffer_transitions(state,action,reward,done)
-            new_state, reward, done, info = self.env.step(action)
+            new_state, reward, done, info = env.step(action)
             if done: self.T=t+1
             if not train_flag: self.store_transitions(state,action,reward)
             if train_flag and tau>=0 : self.update_vol2(state, action, new_state, reward, done, tau=tau) #TODO make simulate,update abstact for all agents?
@@ -78,10 +79,10 @@ class NStepsAgent(QAgent):
 
 
 class SarsaNStepsAgent(NStepsAgent):
-    def __init__(self, env,name,type, num_episodes, gamma, number_steps=1, lr=0.1, eps=0.1, anneal_lr_param=1.,
+    def __init__(self, envs,name,type, num_episodes, gamma, number_steps=1, lr=0.1, eps=0.1, anneal_lr_param=1.,
                  anneal_epsilon_param=1.,
                  threshold_lr_anneal=100., evaluate_every_n_episodes=200):
-        super(SarsaNStepsAgent, self).__init__(env, name,type,num_episodes, gamma, number_steps, lr, eps, anneal_lr_param,
+        super(SarsaNStepsAgent, self).__init__(envs, name,type,num_episodes, gamma, number_steps, lr, eps, anneal_lr_param,
                                                anneal_epsilon_param,
                                                threshold_lr_anneal, evaluate_every_n_episodes)
 
@@ -90,10 +91,10 @@ class SarsaNStepsAgent(NStepsAgent):
 
 
 class QNStepsAgent(NStepsAgent):
-    def __init__(self, env,name,type, num_episodes, gamma, number_steps=1, lr=0.1, eps=0.1, anneal_lr_param=1.,
+    def __init__(self, envs,name,type, num_episodes, gamma, number_steps=1, lr=0.1, eps=0.1, anneal_lr_param=1.,
                  anneal_epsilon_param=1.,
                  threshold_lr_anneal=100., evaluate_every_n_episodes=200):
-        super(QNStepsAgent, self).__init__(env, name,type,num_episodes, gamma, number_steps, lr, eps, anneal_lr_param,
+        super(QNStepsAgent, self).__init__(envs, name,type,num_episodes, gamma, number_steps, lr, eps, anneal_lr_param,
                                            anneal_epsilon_param,
                                            threshold_lr_anneal, evaluate_every_n_episodes)
 

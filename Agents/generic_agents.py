@@ -10,7 +10,7 @@ from data_processing.database import load_db
 
 class Agent:
     def __init__(self, envs, name, type, num_episodes, gamma, lr=0.1, anneal_lr_param=1., threshold_lr_anneal=100.,
-                 evaluate_every_n_episodes=200):
+                 evaluate_every_n_episodes=20):
         """
         :param env:
         :param num_episodes:
@@ -22,7 +22,7 @@ class Agent:
         """
         self.name = name
         self.type = type
-        self.env, self.test_env = envs
+        self.train_env, self.test_env = envs
         self.num_episodes = num_episodes
         self.gamma = gamma
         self.anneal_lr_param = anneal_lr_param
@@ -32,40 +32,51 @@ class Agent:
         self.episode_counter = 0
         self.results = None
         self.total_rewards = None
-        self.states = []
-        self.actions = []
-        self.rewards = []
+        self.total_train_rewards = []
+        self.total_test_rewards = []
+        self.train_states = []
+        self.train_actions = []
+        self.train_rewards = []
+        self.test_states = []
+        self.test_actions = []
+        self.test_rewards = []
 
-    def simulate(self, policy, train_flag=False,eval_flag=False):
+    def simulate(self, policy, train_flag=False, eval_flag=False):
         """
         :param policy:
         :param train_flag:
         :return:
         """
-        env = self.env if eval_flag else self.test_env
+        env = self.test_env if eval_flag else self.train_env
         done = False
         cum_reward = 0.
         state = env.reset()
         while not done:
-            action = policy(state)
+            action = policy(state,env)
             new_state, reward, done, info = env.step(action)
             if not train_flag:
-                self.store_transitions(state, action, reward)
-            if train_flag: self.update(state, action, new_state, reward, done)
+                self.store_transitions(state, action, reward, eval_flag=eval_flag)
+            else:
+                self.update(state, action, new_state, reward, done)
             cum_reward += reward
             state = deepcopy(new_state)
         return cum_reward
 
-    def store_transitions(self, state, action, reward):
+    def store_transitions(self, state, action, reward, eval_flag=False):
         """
         :param state:
         :param action:
         :param reward:
         :return:
         """
-        self.states.append(self.env.unwrapped.state)
-        self.actions.append(self.env.unwrappedaction(action))
-        self.rewards.append(reward)
+        if not eval_flag:
+            self.train_states.append(self.train_env.unwrapped.state)
+            self.train_actions.append(self.train_env.unwrappedaction(action))
+            self.train_rewards.append(reward)
+        else:
+            self.test_states.append(self.test_env.unwrapped.state)
+            self.test_actions.append(self.test_env.unwrappedaction(action))
+            self.test_rewards.append(reward)
 
     def plot(self, exp_path):
         """
@@ -73,17 +84,18 @@ class Agent:
         :return:
         """
         plt.figure()
+        plt.title(self.name)
         ax1 = plt.subplot(311)
         ax1.set_title("States")
-        ax1.plot((np.reshape(self.states, (self.states.__len__(), self.states[0].shape[0])))[:, 0])
+        ax1.plot((np.reshape(self.train_states, (self.train_states.__len__(), self.train_states[0].shape[0])))[:, 0])
         ax2 = plt.subplot(312, sharex=ax1)
         ax2.set_title("Actions")
-        ax2.plot(self.actions)
+        ax2.plot(self.train_actions)
         ax3 = plt.subplot(313, sharex=ax1)
         ax3.set_title("Rewards")
-        ax3.plot(self.rewards)
+        ax3.plot(self.train_rewards)
         plt.savefig('%s/%s agent of type %s on %s for %d episodes with learning rate %s and gamma %s .png' % (
-            exp_path, self.name, self.type, self.env.spec.id, self.num_episodes, self.lr, self.gamma))
+            exp_path, self.name, self.type, self.train_env.spec.id, self.num_episodes, self.lr, self.gamma))
         plt.show()
 
     @staticmethod
@@ -134,14 +146,14 @@ class Agent:
         """
         pass
 
-    def choose_action(self, state):
+    def choose_action(self, state,env):
         """
         :param state:
         :return:
         """
         return 1
 
-    def choose_best_action(self, state):
+    def choose_best_action(self, state, env):
         """
         :param self:
         :param state:
@@ -154,10 +166,12 @@ class Agent:
         :param self:
         :return:
         """
-        episode_reward = self.simulate(policy=self.choose_best_action,eval_flag=False)
-        print("Reward on train evaluation %.2f" % episode_reward)
-        episode_reward = self.simulate(policy=self.choose_best_action,eval_flag=True)
-        print("Reward on test evaluation %.2f" % episode_reward)
+        train_episode_reward = self.simulate(policy=self.choose_best_action, eval_flag=False)
+        self.total_train_rewards.append(train_episode_reward)
+        print("Reward on train evaluation %.2f" % train_episode_reward)
+        test_episode_reward = self.simulate(policy=self.choose_best_action, eval_flag=True)
+        self.total_test_rewards.append(test_episode_reward)
+        print("Reward on test evaluation %.2f" % test_episode_reward)
 
     def update(self, state, action, new_state, reward, done):
         """

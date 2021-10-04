@@ -22,24 +22,33 @@ from functions.wrappers import StateDiscretize, ActionDiscretize
 def make_envs(my_dict):
     final_envs = dict()
     for env_name, vals in my_dict["Environments"].items():
-        envir = list()
-        for params in ["train_parameters", "test_parameters"]:
-            env = gym.make(env_name, **vals[params])
-            envir.append(env)
-        wrapped_env = list()
-        for env in envir:
-            for wrapper, args in vals["wrappers"].items():
-                env = eval(wrapper)(env, **args)
-            wrapped_env.append(env)
+        envir = create_parameters(env_name, vals)
+        wrapped_env = create_wrappers(envir, vals)
         final_envs[env_name] = wrapped_env
     return final_envs
+
+
+def create_parameters(env_name, vals):
+    envir = list()
+    for params in ["train_parameters", "test_parameters"]:
+        env = gym.make(env_name, **vals[params])
+        envir.append(env)
+    return envir
+
+
+def create_wrappers(envir, vals):
+    wrapped_env = list()
+    for env in envir:
+        for wrapper, args in vals["wrappers"].items():
+            env = eval(wrapper)(env, **args)
+        wrapped_env.append(env)
+    return wrapped_env
 
 
 def make_agents(env, my_dict):
     final_ag = list()
     for ag_name, vals in my_dict["Agents"].items():
-        ag_type = vals["type"]
-        ag = eval(ag_type)(env, ag_name, **vals)
+        ag = eval(vals["type"])(env, ag_name, **vals)
         final_ag.append(ag)
     return final_ag
 
@@ -48,11 +57,18 @@ def plot_performance(envs_agents, exp_path):
     for env, agents in envs_agents.items():
         plt.figure()
         plt.title("Performance")
-        plt.suptitle("Cumulative rewards over episodes on " + env.spec.id, fontsize='small')
+        plt.suptitle("Cumulative rewards on " + env + "for training", fontsize='small')
         for agent in agents:
-            plt.plot(agent.total_rewards, label=agent.name)
+            plt.plot(agent.total_train_rewards, label=agent.name)
         plt.legend()
-        plt.savefig('%s/Cumulative rewards over episodes.png' % (exp_path))
+        plt.savefig('%s/Cumulative rewards for training.png' % (exp_path))
+        plt.figure()
+        plt.title("Performance")
+        plt.suptitle("Cumulative rewards" + env + "for testing", fontsize='small')
+        for agent in agents:
+            plt.plot(agent.total_test_rewards, label=agent.name)
+        plt.legend()
+        plt.savefig('%s/Cumulative rewards for testing.png' % (exp_path))
 
 
 def save_agent(agent, exp_path):

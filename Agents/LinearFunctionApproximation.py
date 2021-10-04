@@ -6,15 +6,15 @@ from copy import deepcopy
 
 
 class Linear(Agent):
-    def __init__(self, env,name,type, num_episodes, gamma,eps=0.1, lr=0.1, anneal_lr_param=1.,
+    def __init__(self, envs ,name,type, num_episodes, gamma,eps=0.1, lr=0.1, anneal_lr_param=1.,
                  threshold_lr_anneal=100., evaluate_every_n_episodes=200):
-        super(Linear, self).__init__(env,name,type, num_episodes, gamma)
+        super(Linear, self).__init__(envs,name,type, num_episodes, gamma)
         # initialize weight and bias
         self.w = np.zeros([10])
         self.bias = 1
         self.eps=eps
 
-    def choose_action(self, state):
+    def choose_action(self, state,env):
         if random.uniform(0, 1) < self.eps:
             action = self.env.action_space.sample()  # Explore action space using greedypolicy
         else:
@@ -22,7 +22,7 @@ class Linear(Agent):
         return action
 
     # update parameters
-    def choose_best_action(self, state):
+    def choose_best_action(self, state,env):
         if self.linear_calc(state, -1) > self.linear_calc(state, 1):
             return -1
         else:

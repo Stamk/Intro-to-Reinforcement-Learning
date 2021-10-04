@@ -120,14 +120,13 @@ class  GaussianPolicy:
         self.theta += self.lr * dot
 
 class ReinforceAgent(Agent):
-    def __init__(self, env, num_episodes, gamma, eps, lr, max_buff_size=1200, batch_size=60):
-        super(ReinforceAgent, self).__init__(env, num_episodes, gamma, eps)
-        self.env = env
+    def __init__(self, envs, num_episodes, gamma, eps, lr, max_buff_size=1200, batch_size=60):
+        super(ReinforceAgent, self).__init__(envs, num_episodes, gamma, eps)
         self.action_space_size = env.action_space.shape
         self.eps = eps
         self.lr = lr
         self.total_rewards = np.zeros(self.num_episodes)
-        self.policy = LogisticPolicy(np.random.rand(self.env.observation_space.shape[0]), self.lr, self.gamma)
+        self.policy = LogisticPolicy(np.random.rand(self.train_env.observation_space.shape[0]), self.lr, self.gamma)
         self.init_reinforce_buffers()
 
     def init_reinforce_buffers(self):
@@ -135,7 +134,7 @@ class ReinforceAgent(Agent):
         self.reinforce_actions = []
         self.reinforce_rewards = []
 
-    def choose_action(self, state):
+    def choose_action(self, state,env):
         return self.policy.act(state)
 
     def update(self, state, action, new_state, reward, done):
