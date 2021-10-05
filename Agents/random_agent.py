@@ -8,7 +8,7 @@ class RandomAgent(Agent):
                                           threshold_lr_anneal, evaluate_every_n_episodes)
 
     def choose_action(self, state,env):
-        return self.test_env.action_space.sample().item()
+        return env.action_space.sample().item()
 
     def choose_best_action(self, state,env):
-        return self.test_env.action_space.sample().item()
+        return env.action_space.sample().item()

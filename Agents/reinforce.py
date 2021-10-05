@@ -120,9 +120,9 @@ class  GaussianPolicy:
         self.theta += self.lr * dot
 
 class ReinforceAgent(Agent):
-    def __init__(self, envs, num_episodes, gamma, eps, lr, max_buff_size=1200, batch_size=60):
-        super(ReinforceAgent, self).__init__(envs, num_episodes, gamma, eps)
-        self.action_space_size = env.action_space.shape
+    def __init__(self, envs,name,type, num_episodes, gamma, eps, lr, max_buff_size=1200, batch_size=60):
+        super(ReinforceAgent, self).__init__(envs, name,type,num_episodes, gamma, eps)
+        self.action_space_size = self.train_env.action_space.shape
         self.eps = eps
         self.lr = lr
         self.total_rewards = np.zeros(self.num_episodes)

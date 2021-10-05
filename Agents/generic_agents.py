@@ -83,20 +83,25 @@ class Agent:
         :param exp_path:
         :return:
         """
-        plt.figure()
-        plt.title(self.name)
-        ax1 = plt.subplot(311)
-        ax1.set_title("States")
-        ax1.plot((np.reshape(self.train_states, (self.train_states.__len__(), self.train_states[0].shape[0])))[:, 0])
-        ax2 = plt.subplot(312, sharex=ax1)
-        ax2.set_title("Actions")
-        ax2.plot(self.train_actions)
-        ax3 = plt.subplot(313, sharex=ax1)
-        ax3.set_title("Rewards")
-        ax3.plot(self.train_rewards)
-        plt.savefig('%s/%s agent of type %s on %s for %d episodes with learning rate %s and gamma %s .png' % (
-            exp_path, self.name, self.type, self.train_env.spec.id, self.num_episodes, self.lr, self.gamma))
-        plt.show()
+        for param in ["train", "test"]:
+            plt.figure()
+            plt.title(self.name+param)
+            states=getattr(self, param + "_states")
+            ax1 = plt.subplot(311)
+            ax1.set_title(param+" states")
+            ax1.plot((np.reshape(states, (states.__len__(), states[0].shape[0])))[:, 0])
+            ax2 = plt.subplot(312, sharex=ax1)
+            ax2.set_title(param+"actions")
+            actions = getattr(self, param + "_actions")
+            ax2.plot(actions)
+            ax3 = plt.subplot(313, sharex=ax1)
+            ax3.set_title(param+" rewards")
+            rewards=getattr(self, param + "_rewards")
+            ax3.plot(rewards)
+            env = getattr(self, param + "_env")
+            plt.savefig('%s/%s agent of type %s on %s for %d episodes with learning rate %s and gamma %s for %s.png' % (
+                exp_path, self.name, self.type, env.spec.id, self.num_episodes, self.lr, self.gamma,param))
+            plt.show()
 
     @staticmethod
     def linear_decay(val, param):

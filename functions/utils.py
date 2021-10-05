@@ -55,20 +55,14 @@ def make_agents(env, my_dict):
 
 def plot_performance(envs_agents, exp_path):
     for env, agents in envs_agents.items():
-        plt.figure()
-        plt.title("Performance")
-        plt.suptitle("Cumulative rewards on " + env + "for training", fontsize='small')
-        for agent in agents:
-            plt.plot(agent.total_train_rewards, label=agent.name)
-        plt.legend()
-        plt.savefig('%s/Cumulative rewards for training.png' % (exp_path))
-        plt.figure()
-        plt.title("Performance")
-        plt.suptitle("Cumulative rewards" + env + "for testing", fontsize='small')
-        for agent in agents:
-            plt.plot(agent.total_test_rewards, label=agent.name)
-        plt.legend()
-        plt.savefig('%s/Cumulative rewards for testing.png' % (exp_path))
+        for param in ["train", "test"]:
+            plt.figure()
+            plt.title("Performance")
+            plt.suptitle("Cumulative rewards on evaluation in " + env + " for " + param, fontsize='small')
+            for agent in agents:
+                plt.plot(getattr(agent, "total_" + param + "_rewards"), label=agent.name)
+            plt.legend()
+            plt.savefig(exp_path + "/Cumulative rewards on evaluation in " + env + " for " + param + ".png")
 
 
 def save_agent(agent, exp_path):

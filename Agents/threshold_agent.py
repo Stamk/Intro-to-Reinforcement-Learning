@@ -28,9 +28,9 @@ class ThresholdAgent(Agent):
 
     def choose_best_action(self, state,env):
         action = 0
-        if self.test_env.unwrapped.state[-1] > self.threshold[1]:
+        if env.unwrapped.state[-1] > self.threshold[1]:
             action = -1
-        elif self.test_env.unwrapped.state[-1] < self.threshold[0]:
+        elif env.unwrapped.state[-1] < self.threshold[0]:
             action = 1
         return action
 
