@@ -52,7 +52,7 @@ class Agent:
         cum_reward = 0.
         state = env.reset()
         while not done:
-            action = policy(state,env)
+            action = policy(state, env)
             new_state, reward, done, info = env.step(action)
             if not train_flag:
                 self.store_transitions(state, action, reward, eval_flag=eval_flag)
@@ -85,22 +85,22 @@ class Agent:
         """
         for param in ["train", "test"]:
             plt.figure()
-            plt.title(self.name+param)
-            states=getattr(self, param + "_states")
+            plt.title(self.name + param)
+            states = getattr(self, param + "_states")
             ax1 = plt.subplot(311)
-            ax1.set_title(param+" states")
+            ax1.set_title(param + " states")
             ax1.plot((np.reshape(states, (states.__len__(), states[0].shape[0])))[:, 0])
             ax2 = plt.subplot(312, sharex=ax1)
-            ax2.set_title(param+"actions")
+            ax2.set_title(param + "actions")
             actions = getattr(self, param + "_actions")
             ax2.plot(actions)
             ax3 = plt.subplot(313, sharex=ax1)
-            ax3.set_title(param+" rewards")
-            rewards=getattr(self, param + "_rewards")
+            ax3.set_title(param + " rewards")
+            rewards = getattr(self, param + "_rewards")
             ax3.plot(rewards)
             env = getattr(self, param + "_env")
             plt.savefig('%s/%s agent of type %s on %s for %d episodes with learning rate %s and gamma %s for %s.png' % (
-                exp_path, self.name, self.type, env.spec.id, self.num_episodes, self.lr, self.gamma,param))
+                exp_path, self.name, self.type, env.spec.id, self.num_episodes, self.lr, self.gamma, param))
             plt.show()
 
     @staticmethod
@@ -151,7 +151,7 @@ class Agent:
         """
         pass
 
-    def choose_action(self, state,env):
+    def choose_action(self, state, env):
         """
         :param state:
         :return:

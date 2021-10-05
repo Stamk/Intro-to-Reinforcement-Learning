@@ -53,6 +53,16 @@ def make_agents(env, my_dict):
     return final_ag
 
 
+def filter_list(res_list, alpha=0.9):
+    c = 0.
+    filtered_list = [c]
+    for it in res_list:
+        c = alpha * c + (1. - alpha) * it
+        filtered_list.append(c)
+
+    return filtered_list
+
+
 def plot_performance(envs_agents, exp_path):
     for env, agents in envs_agents.items():
         for param in ["train", "test"]:
@@ -60,7 +70,8 @@ def plot_performance(envs_agents, exp_path):
             plt.title("Performance")
             plt.suptitle("Cumulative rewards on evaluation in " + env + " for " + param, fontsize='small')
             for agent in agents:
-                plt.plot(getattr(agent, "total_" + param + "_rewards"), label=agent.name)
+                res_list = getattr(agent, "total_" + param + "_rewards")
+                plt.plot(filter_list(res_list, alpha=0.9), label=agent.name)
             plt.legend()
             plt.savefig(exp_path + "/Cumulative rewards on evaluation in " + env + " for " + param + ".png")
 
