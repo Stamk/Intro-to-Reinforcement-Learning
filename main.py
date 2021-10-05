@@ -24,7 +24,7 @@ from shutil import copy
 
 def get_config_file():
     parser = argparse.ArgumentParser(description='Run RL agents.')
-    parser.add_argument('--config_file', help='Path to config file')
+    parser.add_argument('--config_file', required=True, help='Path to config file')
     args = parser.parse_args()
 
     config_file = args.config_file
