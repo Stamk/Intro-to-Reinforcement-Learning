@@ -1,6 +1,10 @@
+import argparse
 import gym
 import matplotlib.pyplot as plt
 import pickle
+from datetime import datetime
+import os
+import json
 from copy import deepcopy
 import RL_storage_env  #### Important to keep here
 import numpy as np
@@ -79,6 +83,44 @@ def plot_performance(envs_agents, exp_path):
 def save_agent(agent, exp_path):
     with open(exp_path + '/' + agent.name + '.pkl', 'wb') as outp:
         pickle.dump(agent, outp, pickle.HIGHEST_PROTOCOL)
+
+def get_config_file():
+    parser = argparse.ArgumentParser(description='Run RL agents.')
+    parser.add_argument('--config_file', required=True, help='Path to config file')
+    args = parser.parse_args()
+
+    config_file = args.config_file
+    return config_file
+
+
+def get_exp_dir():
+    exp_path = "results/%s" % (datetime.now().strftime("%Y_%m_%d_%H%M%S"))
+    os.makedirs(exp_path)
+    return exp_path
+
+
+def load_input_data(config_file):
+    with open(config_file, 'rb') as f:
+        data = json.load(f)
+    return data
+
+
+def create_envs_agents_combinations(data):
+    envs = make_envs(data)
+    envs_agents = dict()
+    for env_name, env in envs.items():
+        envs_agents[env_name] = make_agents(env, data)
+    return envs_agents
+
+
+def run(envs_agents,exp_path):
+    for env, agents in envs_agents.items():
+        for agent in agents:
+            agent.train()
+            agent.plot(exp_path)
+            save_agent(agent, exp_path)
+
+
 
 
 def custom_hook(obj):

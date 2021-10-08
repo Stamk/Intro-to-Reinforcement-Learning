@@ -142,7 +142,7 @@ class Agent:
             if episode_reward > self.threshold_lr_anneal:
                 self.lr = self.anneal_lr(self.lr)
             if i % self.evaluate_every_n_episodes == 0:
-                print("episode", i)
+                print(self.name+" on episode ",i)
                 self.evaluate()
 
     def update_after_ep(self):

@@ -26,7 +26,7 @@ class LogisticPolicy:
     def act(self, x):
         # sample an action in proportion to probabilities
         probs = self.probs(x)
-        action = np.random.choice([-1, 1], p=probs)
+        action = np.random.choice([0, 1], p=probs)
         return action
 
     def grad_log_p(self, x):
@@ -135,6 +135,9 @@ class ReinforceAgent(Agent):
         self.reinforce_rewards = []
 
     def choose_action(self, state,env):
+        return self.policy.act(state)
+
+    def choose_best_action(self, state,env):
         return self.policy.act(state)
 
     def update(self, state, action, new_state, reward, done):

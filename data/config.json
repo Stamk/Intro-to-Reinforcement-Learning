@@ -1,0 +1,11 @@
+{
+
+  "name": "BSS_1",
+  "capacity": 200.0,
+  "max_charge_rate": 200.0,
+  "max_discharge_rate": 200.0,
+  "charge_efficiency": 0.75,
+  "discharge_efficiency": 0.75,
+  "init_soc": 100,
+  "min_soc" : 0
+    }
