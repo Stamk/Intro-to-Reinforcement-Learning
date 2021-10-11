@@ -47,7 +47,7 @@ class Agent:
         :param train_flag:
         :return:
         """
-        env = self.test_env if eval_flag else self.train_env
+        env = self.train_env if train_flag else self.test_env
         done = False
         cum_reward = 0.
         state = env.reset()
