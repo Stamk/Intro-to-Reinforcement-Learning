@@ -22,7 +22,7 @@ class Agent:
         """
         self.name = name
         self.type = type
-        self.train_env, self.test_env = envs
+        self.train_env, self.test_env = deepcopy(envs)
         self.num_episodes = num_episodes
         self.gamma = gamma
         self.anneal_lr_param = anneal_lr_param
@@ -41,8 +41,30 @@ class Agent:
         self.test_actions = []
         self.test_rewards = []
 
+    def train(self):
+        """
+        :return:
+        """
+
+        self.total_episodes_rewards = np.zeros(self.num_episodes)
+        for i in range(self.num_episodes):
+            self.episode_counter = i
+            episode_reward = self.simulate(policy=self.choose_action, train_flag=True, env=self.train_env)
+            self.update_after_ep()
+
+            self.total_episodes_rewards[i] = episode_reward
+
+            if episode_reward > self.threshold_lr_anneal:
+                self.lr = self.anneal_lr(self.lr)
+
+            if i % self.evaluate_every_n_episodes == 0:
+                print(self.name + " on episode ", i)
+                self.evaluate()
+
     def simulate(self, policy, env, train_flag=False, eval_flag=False):
         """
+        :param env:
+        :param eval_flag:
         :param policy:
         :param train_flag:
         :return:
@@ -53,10 +75,12 @@ class Agent:
         while not done:
             action = policy(state, env)
             new_state, reward, done, info = env.step(action)
+
             if not train_flag:
                 self.store_transitions(state, action, reward, eval_flag=eval_flag)
             else:
                 self.update(state, action, new_state, reward, done)
+
             cum_reward += reward
             state = deepcopy(new_state)
         return cum_reward
@@ -127,22 +151,6 @@ class Agent:
         :return:
         """
         return self.exp_decay(lr, self.anneal_lr_param)
-
-    def train(self):
-        """
-        :return:
-        """
-        self.total_episodes_rewards = np.zeros(self.num_episodes)
-        for i in range(self.num_episodes):
-            self.episode_counter = i
-            episode_reward = self.simulate(policy=self.choose_action, train_flag=True, env=self.train_env)
-            self.update_after_ep()
-            self.total_episodes_rewards[i] = episode_reward
-            if episode_reward > self.threshold_lr_anneal:
-                self.lr = self.anneal_lr(self.lr)
-            if i % self.evaluate_every_n_episodes == 0:
-                print(self.name + " on episode ", i)
-                self.evaluate()
 
     def update_after_ep(self):
         """

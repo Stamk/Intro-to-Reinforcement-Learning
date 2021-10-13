@@ -79,9 +79,11 @@ def plot_performance(envs_agents, exp_path):
             plt.legend()
             plt.savefig(exp_path + "/Cumulative rewards on evaluation in " + env + " for " + param + ".png")
 
+
 def save_agent(agent, exp_path):
     with open(exp_path + '/' + agent.name + '.pkl', 'wb') as outp:
         pickle.dump(agent, outp, pickle.HIGHEST_PROTOCOL)
+
 
 def get_config_file():
     parser = argparse.ArgumentParser(description='Run RL agents.')
@@ -90,15 +92,18 @@ def get_config_file():
     config_file = args.config_file
     return config_file
 
+
 def get_exp_dir():
     exp_path = "results/%s" % (datetime.now().strftime("%Y_%m_%d_%H%M%S"))
     os.makedirs(exp_path)
     return exp_path
 
+
 def load_input_data(config_file):
     with open(config_file, 'rb') as f:
         data = json.load(f)
     return data
+
 
 def create_envs_agents_combinations(data):
     envs = make_envs(data)
@@ -107,12 +112,14 @@ def create_envs_agents_combinations(data):
         envs_agents[env_name] = make_agents(env, data)
     return envs_agents
 
-def run(envs_agents,exp_path):
+
+def run(envs_agents, exp_path):
     for env, agents in envs_agents.items():
         for agent in agents:
             agent.train()
             agent.plot(exp_path)
             save_agent(agent, exp_path)
+
 
 def custom_hook(obj):
     # Identify dictionary with duplicate keys...

@@ -4,36 +4,37 @@ import gym
 
 
 class StateDiscretize(gym.ObservationWrapper):
-    def __init__(self, env, stepsizes=[], prices_flag="False", low=None, high=None):
+    def __init__(self, env, stepsizes=[], prices_flag=False, low=None, high=None):
         super(StateDiscretize, self).__init__(env)
-        self.Statestepsizes = stepsizes
-        self.prices_flag = exec(prices_flag)
+        self.state_step_sizes = stepsizes
+        self.state_bins = np.empty(len(self.state_step_sizes), dtype=object)
+        self.prices_flag = prices_flag
+
         if high is not None:
             self.env.observation_space.high = np.array(high)
         if low is not None:
             self.env.observation_space.low = np.array(-low)
         if not self.prices_flag:
-            if len(self.Statestepsizes) == 0:
+            if len(self.state_step_sizes) == 0:
                 self.observation_space = gym.spaces.Box(high=env.observation_space.high[0:3],
                                                         low=self.env.observation_space.low[0:3])
             else:
                 self.create_statebins()
-                self.observation_space = gym.spaces.MultiDiscrete(self.Statestepsizes)
+                self.observation_space = gym.spaces.MultiDiscrete(self.state_step_sizes)
         else:
-            if len(self.Statestepsizes) == 0:
+            if len(self.state_step_sizes) == 0:
                 pass
             else:
                 self.create_statebins()
-                self.observation_space = gym.spaces.MultiDiscrete(self.Statestepsizes + 1)
+                self.observation_space = gym.spaces.MultiDiscrete(self.state_step_sizes + 1)
 
     def create_statebins(self):
-        self.Statebins = np.empty(len(self.Statestepsizes), dtype=object)
-        for i in range(len(self.Statestepsizes)):
-            self.Statebins[i] = np.linspace(self.env.observation_space.low[i], self.env.observation_space.high[i],
-                                            self.Statestepsizes[i])
+        for i in range(len(self.state_step_sizes)):
+            self.state_bins[i] = np.linspace(self.env.observation_space.low[i], self.env.observation_space.high[i],
+                                             self.state_step_sizes[i])
 
     def observation(self, observation):
-        if len(self.Statestepsizes) == 0:
+        if len(self.state_step_sizes) == 0:
             if not self.prices_flag:
                 return observation[0:3]
             else:
@@ -47,7 +48,7 @@ class StateDiscretize(gym.ObservationWrapper):
     def discretize_observation(self, observation):
         for i in range(0, self.observation_space.shape[0]):
             observation[i] = np.digitize(observation[i],
-                                         self.Statebins[i]) - 1  # return observation as index for table
+                                         self.state_bins[i]) - 1  # return observation as index for table
         return tuple(observation.astype(int))
 
 

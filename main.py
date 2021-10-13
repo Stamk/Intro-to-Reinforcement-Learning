@@ -28,6 +28,6 @@ if __name__ == '__main__':
 
     envs_agents = create_envs_agents_combinations(data)
 
-    run(envs_agents,exp_path)
+    run(envs_agents, exp_path)
 
     plot_performance(envs_agents, exp_path)
