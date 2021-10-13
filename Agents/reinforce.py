@@ -71,10 +71,9 @@ class LogisticPolicy:
 
 
 class ReinforceAgent(Agent):
-    def __init__(self, envs, name, type, num_episodes, gamma, eps, lr, max_buff_size=1200, batch_size=60):
-        super(ReinforceAgent, self).__init__(envs, name, type, num_episodes, gamma, eps)
+    def __init__(self, envs, name, type, num_episodes, gamma, lr, max_buff_size=1200, batch_size=60):
+        super(ReinforceAgent, self).__init__(envs, name, type, num_episodes, gamma)
         self.action_space_size = self.train_env.action_space.shape
-        self.eps = eps
         self.lr = lr
         self.total_rewards = np.zeros(self.num_episodes)
         self.reinforce_policy = LogisticPolicy(np.random.rand(self.train_env.observation_space.shape[0]), self.lr,

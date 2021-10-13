@@ -2,46 +2,44 @@
   "Agents": {
     "Myqagent": {
       "type": "QAgent",
-      "num_episodes": 500,
+      "num_episodes": 100,
       "gamma": 0.99,
       "eps": 0.1,
       "lr": 0.1
     },
     "Mysarsa": {
       "type": "SARSA_Agent",
-      "num_episodes": 500,
+      "num_episodes": 100,
       "gamma": 0.99,
       "eps": 0.1,
       "lr": 0.1
     },
     "Myexpectedsarsa": {
       "type": "SARSA_Expected_Agent",
-      "num_episodes": 500,
+      "num_episodes": 100,
       "gamma": 0.99,
       "eps": 0.1,
       "lr": 0.1
     },
     "Mydoubleq": {
       "type": "DoubleQ_Agent",
-      "num_episodes": 500,
+      "num_episodes": 100,
       "gamma": 0.99,
       "eps": 0.1,
       "lr": 0.1
     },
     "MySarsaNStepsAgent": {
       "type": "SarsaNStepsAgent",
-      "num_episodes": 500,
+      "num_episodes": 100,
       "gamma": 0.99,
       "number_steps": 3,
-      "eps": 0.1,
       "lr": 0.1
     },
     "MyQlearningNStepsAgent": {
       "type": "QNStepsAgent",
-      "num_episodes": 500,
+      "num_episodes": 100,
       "gamma": 0.99,
       "number_steps": 3,
-      "eps": 0.1,
       "lr": 0.1
     }
   },
@@ -62,9 +60,9 @@
           "stepsizes": [
             5,
             5,
-            5,
             5
-          ]
+          ],
+          "prices_flag": "False"
         },
         "ActionDiscretize": {
           "stepsizes": [

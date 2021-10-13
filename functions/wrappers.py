@@ -39,9 +39,12 @@ class StateDiscretize(gym.ObservationWrapper):
             else:
                 return observation
         else:
-            return self.discretize_observation()
+            if not self.prices_flag:
+                return self.discretize_observation(observation[0:3])
+            else:
+                return self.discretize_observation(observation)
 
-    def discretize_observation(self):
+    def discretize_observation(self, observation):
         for i in range(0, self.observation_space.shape[0]):
             observation[i] = np.digitize(observation[i],
                                          self.Statebins[i]) - 1  # return observation as index for table

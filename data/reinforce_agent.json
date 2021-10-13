@@ -4,7 +4,6 @@
       "type": "ReinforceAgent",
       "num_episodes": 600,
       "gamma": 0.9,
-      "eps": 0.1,
       "lr": 0.1
     }
   },

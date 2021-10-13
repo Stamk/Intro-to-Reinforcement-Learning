@@ -31,7 +31,7 @@ class Agent:
         self.evaluate_every_n_episodes = evaluate_every_n_episodes
         self.episode_counter = 0
         self.results = None
-        self.total_rewards = None
+        self.total_episodes_rewards = None
         self.total_train_rewards = []
         self.total_test_rewards = []
         self.train_states = []
@@ -41,13 +41,12 @@ class Agent:
         self.test_actions = []
         self.test_rewards = []
 
-    def simulate(self, policy, train_flag=False, eval_flag=False):
+    def simulate(self, policy, env, train_flag=False, eval_flag=False):
         """
         :param policy:
         :param train_flag:
         :return:
         """
-        env = self.train_env if train_flag else self.test_env
         done = False
         cum_reward = 0.
         state = env.reset()
@@ -133,16 +132,16 @@ class Agent:
         """
         :return:
         """
-        self.total_rewards = np.zeros(self.num_episodes)
+        self.total_episodes_rewards = np.zeros(self.num_episodes)
         for i in range(self.num_episodes):
             self.episode_counter = i
-            episode_reward = self.simulate(policy=self.choose_action, train_flag=True)
+            episode_reward = self.simulate(policy=self.choose_action, train_flag=True, env=self.train_env)
             self.update_after_ep()
-            self.total_rewards[i] = episode_reward
+            self.total_episodes_rewards[i] = episode_reward
             if episode_reward > self.threshold_lr_anneal:
                 self.lr = self.anneal_lr(self.lr)
             if i % self.evaluate_every_n_episodes == 0:
-                print(self.name+" on episode ",i)
+                print(self.name + " on episode ", i)
                 self.evaluate()
 
     def update_after_ep(self):
@@ -171,10 +170,10 @@ class Agent:
         :param self:
         :return:
         """
-        train_episode_reward = self.simulate(policy=self.choose_best_action, eval_flag=False)
+        train_episode_reward = self.simulate(policy=self.choose_best_action, env=self.train_env)
         self.total_train_rewards.append(train_episode_reward)
         print("Reward on train evaluation %.2f" % train_episode_reward)
-        test_episode_reward = self.simulate(policy=self.choose_best_action, eval_flag=True)
+        test_episode_reward = self.simulate(policy=self.choose_best_action, env=self.test_env, eval_flag=True)
         self.total_test_rewards.append(test_episode_reward)
         print("Reward on test evaluation %.2f" % test_episode_reward)
 
@@ -195,7 +194,7 @@ class Agent:
         :return:
         """
         mean_rewards = np.zeros(self.num_episodes)
-        if self.total_rewards is not None:
+        if self.total_episodes_rewards is not None:
             for i in range(self.num_episodes):
-                mean_rewards[i] = np.mean(self.total_rewards[max(0, i - mean_of_episodes):(i + 1)])
+                mean_rewards[i] = np.mean(self.total_episodes_rewards[max(0, i - mean_of_episodes):(i + 1)])
         self.results = mean_rewards
