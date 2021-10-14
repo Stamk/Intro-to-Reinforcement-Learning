@@ -30,7 +30,6 @@ class Agent:
         self.threshold_lr_anneal = threshold_lr_anneal
         self.evaluate_every_n_episodes = evaluate_every_n_episodes
         self.episode_counter = 0
-        self.results = None
         self.total_episodes_rewards = None
         self.total_train_rewards = []
         self.total_test_rewards = []
@@ -85,21 +84,18 @@ class Agent:
             state = deepcopy(new_state)
         return cum_reward
 
-    def store_transitions(self, state, action, reward, eval_flag=False):
+    def evaluate(self):
         """
-        :param state:
-        :param action:
-        :param reward:
+        :param self:
         :return:
         """
-        if not eval_flag:
-            self.train_states.append(self.train_env.unwrapped.state)
-            self.train_actions.append(self.train_env.unwrappedaction(action))
-            self.train_rewards.append(reward)
-        else:
-            self.test_states.append(self.test_env.unwrapped.state)
-            self.test_actions.append(self.test_env.unwrappedaction(action))
-            self.test_rewards.append(reward)
+        train_episode_reward = self.simulate(policy=self.choose_best_action, env=self.train_env)
+        self.total_train_rewards.append(train_episode_reward)
+        print("Reward on train evaluation %.2f" % train_episode_reward)
+        test_episode_reward = self.simulate(policy=self.choose_best_action, env=self.test_env, eval_flag=True)
+        self.total_test_rewards.append(test_episode_reward)
+        print("Reward on test evaluation %.2f" % test_episode_reward)
+
 
     def plot(self, exp_path):
         """
@@ -125,6 +121,24 @@ class Agent:
             plt.savefig('%s/%s agent of type %s on %s for %d episodes with learning rate %s and gamma %s for %s.png' % (
                 exp_path, self.name, self.type, env.spec.id, self.num_episodes, self.lr, self.gamma, param))
             plt.show()
+
+
+    def store_transitions(self, state, action, reward, eval_flag=False):
+        """
+        :param state:
+        :param action:
+        :param reward:
+        :return:
+        """
+        if not eval_flag:
+            self.train_states.append(self.train_env.unwrapped.state)
+            self.train_actions.append(self.train_env.unwrappedaction(action))
+            self.train_rewards.append(reward)
+        else:
+            self.test_states.append(self.test_env.unwrapped.state)
+            self.test_actions.append(self.test_env.unwrappedaction(action))
+            self.test_rewards.append(reward)
+
 
     @staticmethod
     def linear_decay(val, param):
@@ -173,18 +187,6 @@ class Agent:
         """
         return 1
 
-    def evaluate(self):
-        """
-        :param self:
-        :return:
-        """
-        train_episode_reward = self.simulate(policy=self.choose_best_action, env=self.train_env)
-        self.total_train_rewards.append(train_episode_reward)
-        print("Reward on train evaluation %.2f" % train_episode_reward)
-        test_episode_reward = self.simulate(policy=self.choose_best_action, env=self.test_env, eval_flag=True)
-        self.total_test_rewards.append(test_episode_reward)
-        print("Reward on test evaluation %.2f" % test_episode_reward)
-
     def update(self, state, action, new_state, reward, done):
         """
         :param state:
@@ -195,14 +197,3 @@ class Agent:
         :return:
         """
         pass
-
-    def save_results(self, mean_of_episodes=50):
-        """
-        :param mean_of_episodes:
-        :return:
-        """
-        mean_rewards = np.zeros(self.num_episodes)
-        if self.total_episodes_rewards is not None:
-            for i in range(self.num_episodes):
-                mean_rewards[i] = np.mean(self.total_episodes_rewards[max(0, i - mean_of_episodes):(i + 1)])
-        self.results = mean_rewards

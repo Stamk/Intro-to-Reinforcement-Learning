@@ -3,30 +3,32 @@ import numpy as np
 import gym
 
 
+class PricesAddition(gym.ObservationWrapper):
+    def __init__(self, env, prices_flag=True):
+        super(PricesAddition, self).__init__(env)
+        self.flag = prices_flag
+        if not prices_flag: self.observation_space = gym.spaces.Box(env.observation_space.low[0:3],env.observation_space.high[0:3],dtype=np.float32)
+
+    def observation(self, observation):
+        if not self.flag: observation = observation[0:3]
+        return observation
+
+
 class StateDiscretize(gym.ObservationWrapper):
-    def __init__(self, env, stepsizes=[], prices_flag=False, low=None, high=None):
+    def __init__(self, env, stepsizes=[], low=None, high=None):
         super(StateDiscretize, self).__init__(env)
         self.state_step_sizes = stepsizes
         self.state_bins = np.empty(len(self.state_step_sizes), dtype=object)
-        self.prices_flag = prices_flag
 
         if high is not None:
             self.env.observation_space.high = np.array(high)
         if low is not None:
             self.env.observation_space.low = np.array(-low)
-        if not self.prices_flag:
-            if len(self.state_step_sizes) == 0:
-                self.observation_space = gym.spaces.Box(high=env.observation_space.high[0:3],
-                                                        low=self.env.observation_space.low[0:3])
-            else:
-                self.create_statebins()
-                self.observation_space = gym.spaces.MultiDiscrete(self.state_step_sizes)
+        if len(self.state_step_sizes) == 0:
+            pass
         else:
-            if len(self.state_step_sizes) == 0:
-                pass
-            else:
-                self.create_statebins()
-                self.observation_space = gym.spaces.MultiDiscrete(self.state_step_sizes + 1)
+            self.create_statebins()
+            self.observation_space = gym.spaces.MultiDiscrete(self.state_step_sizes)
 
     def create_statebins(self):
         for i in range(len(self.state_step_sizes)):
@@ -35,14 +37,8 @@ class StateDiscretize(gym.ObservationWrapper):
 
     def observation(self, observation):
         if len(self.state_step_sizes) == 0:
-            if not self.prices_flag:
-                return observation[0:3]
-            else:
                 return observation
         else:
-            if not self.prices_flag:
-                return self.discretize_observation(observation[0:3])
-            else:
                 return self.discretize_observation(observation)
 
     def discretize_observation(self, observation):

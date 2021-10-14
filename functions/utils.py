@@ -1,14 +1,11 @@
-import argparse
+import RL_storage_env  #### Important to keep here
 import gym
+import argparse
 import matplotlib.pyplot as plt
 import pickle
 from datetime import datetime
 import os
 import json
-from copy import deepcopy
-import RL_storage_env  #### Important to keep here
-import numpy as np
-from collections import defaultdict
 
 from Agents.q_learning_agent import QAgent
 from Agents.SARSA_agent import SARSA_Agent
@@ -20,8 +17,7 @@ from Agents.reinforce import ReinforceAgent
 from Agents.random_agent import RandomAgent
 from Agents.threshold_agent import ThresholdAgent
 # from Agents.LinearFunctionApproximation_v2 import LFA_agent
-from functions.wrappers import StateDiscretize, ActionDiscretize
-
+from functions.wrappers import StateDiscretize, ActionDiscretize, PricesAddition
 
 def make_envs(my_dict):
     final_envs = dict()
@@ -121,12 +117,3 @@ def run(envs_agents, exp_path):
             save_agent(agent, exp_path)
 
 
-def custom_hook(obj):
-    # Identify dictionary with duplicate keys...
-    # If found create a separate dict with single key and val and as list.
-    if len(obj) > 1 and len(set(i for i, j in obj)) == 1:
-        data_dict = defaultdict(list)
-        for i, j in obj:
-            data_dict[i].append(j)
-        return dict(data_dict)
-    return dict(obj)

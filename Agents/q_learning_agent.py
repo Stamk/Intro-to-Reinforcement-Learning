@@ -1,5 +1,4 @@
 import random
-
 import gym
 import numpy as np
 from Agents.generic_agents import Agent
@@ -11,8 +10,10 @@ class QAgent(Agent):
                  threshold_lr_anneal=100., evaluate_every_n_episodes=20):
         super(QAgent, self).__init__(envs, name, type, num_episodes, gamma, lr, anneal_lr_param,
                                      evaluate_every_n_episodes)
-        assert isinstance(self.train_env.observation_space, gym.spaces.MultiDiscrete), "Obs space not discretized"
-        assert isinstance(self.test_env.observation_space, gym.spaces.MultiDiscrete), "Obs space not discretized"
+        assert isinstance(self.train_env.observation_space, gym.spaces.MultiDiscrete), "Train obs space not discretized"
+        assert isinstance(self.test_env.observation_space, gym.spaces.MultiDiscrete), "Test obs space not discretized"
+        assert isinstance(self.test_env.action_space, gym.spaces.MultiDiscrete), "Test action space not discretized"
+        assert isinstance(self.train_env.action_space, gym.spaces.MultiDiscrete), "Train action space not discretized"
         # TODO all agents
         q_table_shape = np.concatenate((self.train_env.observation_space.nvec, self.train_env.action_space.nvec))
         self.q_table = np.zeros(q_table_shape)
