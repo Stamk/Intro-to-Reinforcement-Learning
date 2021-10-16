@@ -42,17 +42,20 @@
         "Dt": "15min"
       },
       "wrappers": {
+        "PricesAddition": {
+          "prices_flag": true
+        },
         "StateDiscretize": {
           "stepsizes": [
-            5,
-            5,
-            5,
-            5
+            20,
+            20,
+            20,
+            20
           ]
         },
         "ActionDiscretize": {
           "stepsizes": [
-            3
+            10
           ]
         }
       }

@@ -1,8 +1,6 @@
 import random
 import numpy as np
-import copy
 from Agents.generic_agents import Agent
-from copy import deepcopy
 
 
 class Linear(Agent):
@@ -23,10 +21,10 @@ class Linear(Agent):
 
     # update parameters
     def choose_best_action(self, state,env):
-        if self.linear_calc(state, 0) > self.linear_calc(state, env.action_space.nvec[0]-1):
+        if self.linear_calc(state, 0) > self.linear_calc(state, 1):
             return 0
         else:
-            return env.action_space.nvec[0]-1
+            return 1
 
     def update(self, state, action, new_state, reward, done):
         prediction = self.linear_calc(state, action)  # actions given state s
@@ -38,13 +36,11 @@ class Linear(Agent):
         TD_error = self.lr * delta
         self.w = self.w + TD_error * feature
 
-    # return q(s, a; w) for a given state s and action a
+
     def linear_calc(self, state, action):
         product = 0.0
         state = np.concatenate((state, np.array([1])), axis=0)
         feature = self.get_feature_from_state_action(state, action)
-        #            for state,v in states:
-        #                product += v * self.w[state, action]
         product = np.dot(self.w, feature)
         return product
 
@@ -54,5 +50,4 @@ class Linear(Agent):
         offset = action * len(state)
         for i in range(len(state)):
             feature[i + offset] = state[i]
-        # feature[-1]=self.bias
         return feature

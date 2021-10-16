@@ -1,10 +1,5 @@
-import random
-from collections import deque
-from copy import deepcopy
-import gym
 from Agents.generic_agents import Agent
 import numpy as np
-
 
 class LogisticPolicy:
     def __init__(self, theta, lr, gamma, mid_point, growth_rate):

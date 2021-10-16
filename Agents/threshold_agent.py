@@ -14,9 +14,6 @@ class ThresholdAgent(Agent):
         self.method = method
 
     def train(self):
-        """
-        :return:
-        """
         self.threshold = self.optimizer(self.threshold)
         self.total_rewards = np.zeros(self.num_episodes)
         self.evaluate()

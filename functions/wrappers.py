@@ -7,7 +7,8 @@ class PricesAddition(gym.ObservationWrapper):
     def __init__(self, env, prices_flag=True):
         super(PricesAddition, self).__init__(env)
         self.flag = prices_flag
-        if not prices_flag: self.observation_space = gym.spaces.Box(env.observation_space.low[0:3],env.observation_space.high[0:3],dtype=np.float32)
+        if not prices_flag: self.observation_space = gym.spaces.Box(env.observation_space.low[0:3],
+                                                                    env.observation_space.high[0:3], dtype=np.float32)
 
     def observation(self, observation):
         if not self.flag: observation = observation[0:3]
@@ -27,19 +28,19 @@ class StateDiscretize(gym.ObservationWrapper):
         if len(self.state_step_sizes) == 0:
             pass
         else:
-            self.create_statebins()
+            self.create_state_bins()
             self.observation_space = gym.spaces.MultiDiscrete(self.state_step_sizes)
 
-    def create_statebins(self):
+    def create_state_bins(self):
         for i in range(len(self.state_step_sizes)):
             self.state_bins[i] = np.linspace(self.env.observation_space.low[i], self.env.observation_space.high[i],
                                              self.state_step_sizes[i])
 
     def observation(self, observation):
         if len(self.state_step_sizes) == 0:
-                return observation
+            return observation
         else:
-                return self.discretize_observation(observation)
+            return self.discretize_observation(observation)
 
     def discretize_observation(self, observation):
         for i in range(0, self.observation_space.shape[0]):
@@ -51,26 +52,40 @@ class StateDiscretize(gym.ObservationWrapper):
 class ActionDiscretize(gym.ActionWrapper):
     def __init__(self, env, stepsizes=[], low=None, high=None):
         super(ActionDiscretize, self).__init__(env)
-        self.Actionstepsizes = stepsizes
+        self.action_step_sizes = stepsizes
 
         if high is not None:
             self.env.action_space.high = np.array(high)
         if low is not None:
             self.env.action_space.low = np.array(low)
+        if len(self.action_step_sizes) == 0:
+            pass
+        else:
+            self.create_action_bins()
+            self.action_space = gym.spaces.MultiDiscrete(self.action_step_sizes)
 
-        self.Actionbins = np.empty(len(self.Actionstepsizes), dtype=object)
-        # TODO fix Actionbins for more dimensions
-        self.Actionbins = np.linspace(self.env.action_space.low[0], self.env.action_space.high[0], self.Actionstepsizes[
-            0])  # self.env.observation_space = gym.spaces.Box(self.env.observation_space.low, self.env.observation_space.high,shape=(self.env.observation_space.shape[0], stepsize), dtype=np.float32)
-        self.action_space = gym.spaces.MultiDiscrete(self.Actionstepsizes)
+    def create_action_bins(self):
+        self.action_bins = np.linspace(self.env.action_space.low[0], self.env.action_space.high[0],
+                                       self.action_step_sizes[0])
 
     def action(self, action):
-        # TODO fix actions for more dimensions
-        action = np.digitize(action, self.Actionbins) - 1  # return action as index for table
+        if len(self.action_step_sizes) == 0:
+            return action
+        else:
+            return self.discretize_action(action)
+
+    def discretize_action(self, action):
+        action = np.digitize(action, self.action_bins) - 1  # return action as index for table
         return action
 
     def step(self, action):
-        return self.env.step((self.Actionbins[action]))
+        if len(self.action_step_sizes) == 0:
+            return self.env.step(action)
+        else:
+            return self.env.step((self.action_bins[action]))
 
     def unwrappedaction(self, action):
-        return self.Actionbins[action]
+        if len(self.action_step_sizes) == 0:
+            return action
+        else:
+            return self.action_bins[action]

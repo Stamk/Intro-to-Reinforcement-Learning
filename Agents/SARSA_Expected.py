@@ -1,6 +1,4 @@
-from random import random
 import numpy as np
-from Agents.generic_agents import Agent
 from Agents.SARSA_agent  import SARSA_Agent
 
 class SARSA_Expected_Agent(SARSA_Agent):

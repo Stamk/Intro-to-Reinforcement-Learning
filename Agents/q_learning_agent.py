@@ -18,7 +18,6 @@ class QAgent(Agent):
         q_table_shape = np.concatenate((self.train_env.observation_space.nvec, self.train_env.action_space.nvec))
         self.q_table = np.zeros(q_table_shape)
         self.anneal_epsilon_param = anneal_epsilon_param
-        self.anneal_lr_param = anneal_lr_param
         self.eps = eps
 
     def choose_best_action(self, state, env):
