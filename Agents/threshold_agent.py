@@ -19,7 +19,7 @@ class ThresholdAgent(Agent):
         self.evaluate()
 
     def optimizer(self, x):
-        res = scipy.optimize.minimize(self.eval, x, method=self.method, bounds=[[-100, 200], [-100, 200]],
+        res = scipy.optimize.minimize(self.eval, x, method=self.method, bounds=[[-300, 300], [-300, 300]],
                                       options={'disp': True}, tol=0.0000001)
         return res.x
 

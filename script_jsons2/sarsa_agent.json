@@ -1,48 +1,61 @@
 {
   "Agents": {
-    "Myqagent": {
-      "type": "QAgent",
-      "num_episodes": 100,
-      "gamma": 0.99,
-      "eps": 0.1,
-      "lr": 0.1
-    },
-    "Mysarsa": {
+    "MySarsa_1": {
       "type": "SARSA_Agent",
-      "num_episodes": 100,
+      "num_episodes": 3000,
+      "gamma": 0.99,
+      "eps": 0.8,
+      "anneal_epsilon_param": 0.9992,
+      "lr": 0.1
+    },
+    "MySarsa_2": {
+      "type": "SARSA_Agent",
+      "num_episodes": 2000,
+      "gamma": 0.99,
+      "eps": 0.5,
+      "anneal_epsilon_param": 0.999,
+      "lr": 0.1
+    },
+    "MySarsa_3": {
+      "type": "SARSA_Agent",
+      "num_episodes": 3000,
+      "gamma": 0.99,
+      "eps": 0.5,
+      "anneal_epsilon_param": 0.9991,
+      "lr": 0.1
+    },
+    "MySarsa_4": {
+      "type": "SARSA_Agent",
+      "num_episodes": 2000,
+      "gamma": 0.99,
+      "eps": 0.15,
+      "lr": 0.1
+    },
+    "MySarsa_5": {
+      "type": "SARSA_Agent",
+      "num_episodes": 2000,
       "gamma": 0.99,
       "eps": 0.1,
+      "anneal_lr_param": 0.9995,
       "lr": 0.1
     },
-    "Myexpectedsarsa": {
-      "type": "SARSA_Expected_Agent",
-      "num_episodes": 100,
+    "MySarsa_6": {
+      "type": "SARSA_Agent",
+      "num_episodes": 2000,
       "gamma": 0.99,
       "eps": 0.1,
+      "anneal_lr_param": 0.9995,
       "lr": 0.1
     },
-    "Mydoubleq": {
-      "type": "DoubleQ_Agent",
-      "num_episodes": 100,
-      "gamma": 0.99,
-      "eps": 0.1,
-      "lr": 0.1
+      "MySarsa_7": {
+        "type": "SARSA_Agent",
+        "num_episodes": 3000,
+        "gamma": 0.99,
+        "eps": 0.1,
+        "anneal_lr_param": 0.9993,
+        "lr": 0.15
+      }
     },
-    "MySarsaNStepsAgent": {
-      "type": "SarsaNStepsAgent",
-      "num_episodes": 100,
-      "gamma": 0.99,
-      "number_steps": 3,
-      "lr": 0.1
-    },
-    "MyQlearningNStepsAgent": {
-      "type": "QNStepsAgent",
-      "num_episodes": 100,
-      "gamma": 0.99,
-      "number_steps": 3,
-      "lr": 0.1
-    }
-  },
   "Environments": {
     "RL_storage_env-v0": {
       "train_parameters": {

@@ -21,11 +21,13 @@
       },
       "wrappers": {
         "PricesAddition": {
-          "prices_flag": false
+          "prices_flag": true
         },
+        "FrameStack" : {"num_stack": 2,
+          "lz4_compress": false},
+        "FlattenObservation" :{},
         "StateDiscretize": {
-          "stepsizes": [
-          ]
+          "stepsizes": []
         },
         "ActionDiscretize": {
           "stepsizes": [

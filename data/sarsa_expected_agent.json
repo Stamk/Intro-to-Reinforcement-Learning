@@ -1,9 +1,11 @@
 {
   "Agents": {
-    "007": {
-      "type": "RandomAgent",
-      "num_episodes": 50,
-      "gamma": 0.99
+    "MyExpectedSarsa": {
+      "type": "SARSA_Expected_Agent",
+      "num_episodes": 100,
+      "gamma": 0.99,
+      "eps": 0.1,
+      "lr": 0.1
     }
   },
   "Environments": {
@@ -26,10 +28,11 @@
           "lz4_compress": false},
         "FlattenObservation" :{},
         "StateDiscretize": {
-          "stepsizes": []
+          "stepsizes": [5,5,5,5,5]
         },
         "ActionDiscretize": {
           "stepsizes": [
+            5
           ]
         }
       }

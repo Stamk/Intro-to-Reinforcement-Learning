@@ -2,7 +2,7 @@
   "Agents": {
     "Thres_with_Powell_1": {
       "type": "ThresholdAgent",
-      "num_episodes": 50,
+      "num_episodes": 2000,
       "threshold": [
         -80,
         80
@@ -14,7 +14,7 @@
     },
     "Thres_with_Powell_2": {
       "type": "ThresholdAgent",
-      "num_episodes": 50,
+      "num_episodes": 2000,
       "threshold": [
         0,
         50
@@ -26,7 +26,7 @@
     },
     "Thres_with_Nedler_Mead_1": {
       "type": "ThresholdAgent",
-      "num_episodes": 50,
+      "num_episodes": 2000,
       "threshold": [
         -80,
         80
@@ -38,7 +38,7 @@
     },
     "Thres_with_Nedler_Mead_2": {
       "type": "ThresholdAgent",
-      "num_episodes": 50,
+      "num_episodes": 2000,
       "threshold": [
         0,
         50
@@ -73,6 +73,7 @@
         },
         "ActionDiscretize": {
           "stepsizes": [
+            5
           ]
         }
       }

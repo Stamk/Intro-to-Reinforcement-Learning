@@ -40,7 +40,7 @@ class Agent:
 
     def train(self):
         """
-        Train the agent for all the episodes by calling simulate function with respective arguments
+        Executes all the train process of the agent for all the episodes by calling simulate function with respective arguments
         """
 
         self.total_episodes_rewards = np.zeros(self.num_episodes)

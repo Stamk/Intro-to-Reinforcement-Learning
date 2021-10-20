@@ -2,8 +2,10 @@ import math
 import numpy as np
 import gym
 
-
 class PricesAddition(gym.ObservationWrapper):
+    """
+    It filters if observation space returns the extra states about Imbalance price and mean price
+    """
     def __init__(self, env, prices_flag=True):
         super(PricesAddition, self).__init__(env)
         self.flag = prices_flag
@@ -14,11 +16,16 @@ class PricesAddition(gym.ObservationWrapper):
         if not self.flag: observation = observation[0:3]
         return observation
 
-
 class StateDiscretize(gym.ObservationWrapper):
+    """
+    Discretization of a continuous observation space. It makes an observation space divided in the given step sizes.
+    Note: length of the list with step sizes must be equal with the dimensions of observation space. Number of step sizes can be different for each dimension.
+    For example, if stepsizes=[60,60,60,60] it returns 60 possible discrete observations for each of the four different observations.
+    An empty list, returns observations unchanged.
+    """
     def __init__(self, env, stepsizes=[], low=None, high=None):
         super(StateDiscretize, self).__init__(env)
-        self.state_step_sizes = stepsizes
+        self.state_step_sizes = stepsizes*self.num_stack
         self.state_bins = np.empty(len(self.state_step_sizes), dtype=object)
 
         if high is not None:
@@ -33,8 +40,8 @@ class StateDiscretize(gym.ObservationWrapper):
 
     def create_state_bins(self):
         for i in range(len(self.state_step_sizes)):
-            self.state_bins[i] = np.linspace(self.env.observation_space.low[i], self.env.observation_space.high[i],
-                                             self.state_step_sizes[i])
+            self.state_bins[i] = np.linspace(self.env.env.observation_space.low[0][i%2], self.env.env.observation_space.high[0][i%2],
+                                             self.state_step_sizes[i%2])
 
     def observation(self, observation):
         if len(self.state_step_sizes) == 0:
@@ -50,6 +57,12 @@ class StateDiscretize(gym.ObservationWrapper):
 
 
 class ActionDiscretize(gym.ActionWrapper):
+    """
+    Discretization of a continuous action space. It makes an action space divided in the given step sizes.
+    Note: length of the list with step sizes must be equal with the dimensions of action space. Number of step sizes can be different for each dimension.
+    For example, if stepsizes=[5,5,5] it returns 5 possible discrete actions for each of the three different actions.
+    An empty list, returns actions unchanged.
+    """
     def __init__(self, env, stepsizes=[], low=None, high=None):
         super(ActionDiscretize, self).__init__(env)
         self.action_step_sizes = stepsizes

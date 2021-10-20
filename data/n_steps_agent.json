@@ -1,9 +1,18 @@
 {
   "Agents": {
-    "007": {
-      "type": "RandomAgent",
-      "num_episodes": 50,
-      "gamma": 0.99
+    "My_Sarsa_N_Steps_Agent": {
+      "type": "SarsaNStepsAgent",
+      "num_episodes": 100,
+      "gamma": 0.99,
+      "number_steps": 3,
+      "lr": 0.1
+    },
+    "My_Q_learning_N_Steps_Agent": {
+      "type": "QNStepsAgent",
+      "num_episodes": 100,
+      "gamma": 0.99,
+      "number_steps": 3,
+      "lr": 0.1
     }
   },
   "Environments": {
@@ -26,10 +35,11 @@
           "lz4_compress": false},
         "FlattenObservation" :{},
         "StateDiscretize": {
-          "stepsizes": []
+          "stepsizes": [5,5,5,5,5]
         },
         "ActionDiscretize": {
           "stepsizes": [
+            5
           ]
         }
       }

@@ -1,46 +1,59 @@
 {
   "Agents": {
-    "Myqagent": {
-      "type": "QAgent",
-      "num_episodes": 100,
-      "gamma": 0.99,
-      "eps": 0.1,
-      "lr": 0.1
-    },
-    "Mysarsa": {
-      "type": "SARSA_Agent",
-      "num_episodes": 100,
-      "gamma": 0.99,
-      "eps": 0.1,
-      "lr": 0.1
-    },
-    "Myexpectedsarsa": {
-      "type": "SARSA_Expected_Agent",
-      "num_episodes": 100,
-      "gamma": 0.99,
-      "eps": 0.1,
-      "lr": 0.1
-    },
-    "Mydoubleq": {
+    "My_Double_Q_Agent_1": {
       "type": "DoubleQ_Agent",
-      "num_episodes": 100,
+      "num_episodes": 3000,
+      "gamma": 0.99,
+      "eps": 0.8,
+      "anneal_epsilon_param": 0.9992,
+      "lr": 0.1
+    },
+    "My_Double_Q_Agent_2": {
+      "type": "DoubleQ_Agent",
+      "num_episodes": 2000,
+      "gamma": 0.99,
+      "eps": 0.5,
+      "anneal_epsilon_param": 0.999,
+      "lr": 0.1
+    },
+    "My_Double_Q_Agent_3": {
+      "type": "DoubleQ_Agent",
+      "num_episodes": 3000,
+      "gamma": 0.99,
+      "eps": 0.5,
+      "anneal_epsilon_param": 0.9991,
+      "lr": 0.1
+    },
+    "My_Double_Q_Agent_4": {
+      "type": "DoubleQ_Agent",
+      "num_episodes": 2000,
+      "gamma": 0.99,
+      "eps": 0.15,
+      "lr": 0.1
+    },
+    "My_Double_Q_Agent_5": {
+      "type": "DoubleQ_Agent",
+      "num_episodes": 2000,
       "gamma": 0.99,
       "eps": 0.1,
+      "anneal_lr_param": 0.9995,
       "lr": 0.1
     },
-    "MySarsaNStepsAgent": {
-      "type": "SarsaNStepsAgent",
-      "num_episodes": 100,
+    "My_Double_Q_Agent_6": {
+      "type": "DoubleQ_Agent",
+      "num_episodes": 2000,
       "gamma": 0.99,
-      "number_steps": 3,
+      "eps": 0.1,
+      "anneal_lr_param": 0.9995,
       "lr": 0.1
     },
-    "MyQlearningNStepsAgent": {
-      "type": "QNStepsAgent",
-      "num_episodes": 100,
+    "My_Double_Q_Agent_7": {
+      "type": "DoubleQ_Agent",
+      "num_episodes": 3000,
       "gamma": 0.99,
-      "number_steps": 3,
-      "lr": 0.1
+      "eps": 0.1,
+      "anneal_lr_param": 0.9993,
+      "lr": 0.15
     }
   },
   "Environments": {
