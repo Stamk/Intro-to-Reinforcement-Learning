@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 
 
 class Agent:
-    def __init__(self, envs, name, type, num_episodes, gamma, lr=0.1, anneal_lr_param=1., threshold_lr_anneal=100.,
-                 evaluate_every_n_episodes=20):
+    def __init__(self, envs, name, type, num_episodes, gamma, lr=0.1, anneal_lr_param=1., threshold_lr_anneal=1000.,
+                 evaluate_every_n_episodes=5):
         """
         A generic agent which all agents can inherit with some basic common attributes and parameters for all agents
         :param envs: current working environment
@@ -51,11 +51,11 @@ class Agent:
 
             self.total_episodes_rewards[i] = episode_reward
 
-            if episode_reward > self.threshold_lr_anneal:
-                self.lr = self.anneal_lr(self.lr)
+          #  if episode_reward > self.threshold_lr_anneal:
+               # self.lr = self.linear_decay(self.lr,0.00008)
 
             if i % self.evaluate_every_n_episodes == 0:
-                print(self.name + " on episode ", i)
+             #  print(self.name + " on episode ", i)
                 self.evaluate()
 
     def simulate(self, policy, env, train_flag=False, eval_flag=False):
@@ -93,6 +93,7 @@ class Agent:
         """
         train_episode_reward = self.simulate(policy=self.choose_best_action, env=self.train_env)
         self.total_train_rewards.append(train_episode_reward)
+
         print("Reward on train evaluation %.2f" % train_episode_reward)
         test_episode_reward = self.simulate(policy=self.choose_best_action, env=self.test_env, eval_flag=True)
         self.total_test_rewards.append(test_episode_reward)
@@ -150,6 +151,15 @@ class Agent:
             :return: the new decreased value of learning rate
         """
         return self.exp_decay(lr, self.anneal_lr_param)
+
+    def time_based_decay(self,lr):
+        """
+        Args:
+            :param lr: agent's current learning rate
+        Return:
+            :return: the new decreased value of learning rate
+        """
+        return()
 
     def update_after_ep(self):
         """

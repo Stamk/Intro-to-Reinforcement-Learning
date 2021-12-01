@@ -2,7 +2,7 @@
   "Agents": {
     "Q_Agent_1": {
       "type": "QAgent",
-      "num_episodes": 1000,
+      "num_episodes": 100,
       "gamma": 0.99,
       "eps": 0.1,
       "anneal_epsilon_param": 1,
@@ -10,7 +10,8 @@
     }
   },
   "Environments": {
-    "RL_storage_env-v0": {
+    "My_Storage_Balance_Env_v1": {
+      "type": "RL_storage_env-v0",
       "train_parameters": {
         "start_date": "1/1/2015 0:00",
         "end_date": "2/1/2015 0:00",

@@ -1,45 +1,47 @@
 {
   "Agents": {
-    "My_Sarsa_N_Steps_Agent": {
+    "3_Steps_SARSA": {
       "type": "SarsaNStepsAgent",
-      "num_episodes": 100,
-      "gamma": 0.99,
-      "number_steps": 3,
-      "lr": 0.1
-    },
-    "My_Q_learning_N_Steps_Agent": {
-      "type": "QNStepsAgent",
-      "num_episodes": 100,
+      "num_episodes": 500,
       "gamma": 0.99,
       "number_steps": 3,
       "lr": 0.1
     }
   },
   "Environments": {
-    "RL_storage_env-v0": {
+    "Storage_Balance_Environment": {
+      "type": "RL_storage_env-v0",
       "train_parameters": {
         "start_date": "1/1/2015 0:00",
-        "end_date": "2/1/2015 0:00",
+        "end_date": "8/1/2016 0:00",
         "Dt": "15min"
       },
       "test_parameters": {
-        "start_date": "2/1/2015 0:00",
-        "end_date": "3/1/2015 0:00",
+        "start_date": "8/1/2016 0:00",
+        "end_date": "9/1/2016 0:00",
         "Dt": "15min"
       },
       "wrappers": {
         "PricesAddition": {
           "prices_flag": true
         },
-        "FrameStack" : {"num_stack": 2,
-          "lz4_compress": false},
-        "FlattenObservation" :{},
+        "FrameStack": {
+          "num_stack": 3,
+          "lz4_compress": false
+        },
+        "FlattenObservation": {},
         "StateDiscretize": {
-          "stepsizes": [5,5,5,5,5]
+          "stepsizes": [
+            3,
+            3,
+            3,
+            3,
+            3
+          ]
         },
         "ActionDiscretize": {
           "stepsizes": [
-            5
+            3
           ]
         }
       }

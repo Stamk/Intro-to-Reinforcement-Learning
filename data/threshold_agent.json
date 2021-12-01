@@ -1,75 +1,63 @@
 {
   "Agents": {
-    "Thres_with_Powell_1": {
-      "type": "ThresholdAgent",
-      "num_episodes": 50,
+    "Initial": {
+      "type": "BaselineThresAgent",
+      "num_episodes": 1,
       "threshold": [
-        -80,
-        80
+        -150,
+        150
       ],
-      "method": "Powell",
       "gamma": 0.99,
-      "eps": 0.1,
       "lr": 0.1
     },
-    "Thres_with_Powell_2": {
+    "Nedler_Mead": {
       "type": "ThresholdAgent",
-      "num_episodes": 50,
+      "num_episodes": 1,
       "threshold": [
-        0,
-        50
-      ],
-      "method": "Powell",
-      "gamma": 0.99,
-      "eps": 0.1,
-      "lr": 0.1
-    },
-    "Thres_with_Nedler_Mead_1": {
-      "type": "ThresholdAgent",
-      "num_episodes": 50,
-      "threshold": [
-        -80,
-        80
+        -150,
+       150
       ],
       "method": "Nelder-Mead",
       "gamma": 0.99,
-      "eps": 0.1,
       "lr": 0.1
     },
-    "Thres_with_Nedler_Mead_2": {
+    "Powell": {
       "type": "ThresholdAgent",
-      "num_episodes": 50,
+      "num_episodes": 1,
       "threshold": [
-        0,
-        50
+        -140,
+       140
       ],
-      "method": "Nelder-Mead",
+      "method": "Powell",
       "gamma": 0.99,
-      "eps": 0.1,
       "lr": 0.1
     }
   },
   "Environments": {
-    "RL_storage_env-v0": {
+    "My_Storage_Balance_Env_v1": {
+      "type": "RL_storage_env-v0",
       "train_parameters": {
         "start_date": "1/1/2015 0:00",
-        "end_date": "2/1/2015 0:00",
+        "end_date": "4/1/2015 0:00",
         "Dt": "15min"
       },
       "test_parameters": {
-        "start_date": "2/1/2015 0:00",
-        "end_date": "3/1/2015 0:00",
+        "start_date": "4/1/2015 0:00",
+        "end_date": "5/1/2015 0:00",
         "Dt": "15min"
       },
       "wrappers": {
         "PricesAddition": {
           "prices_flag": true
         },
-        "FrameStack" : {"num_stack": 2,
-          "lz4_compress": false},
-        "FlattenObservation" :{},
+        "FrameStack": {
+          "num_stack": 1,
+          "lz4_compress": false
+        },
+        "FlattenObservation": {},
         "StateDiscretize": {
-          "stepsizes": []
+          "stepsizes": [
+          ]
         },
         "ActionDiscretize": {
           "stepsizes": [

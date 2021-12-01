@@ -19,6 +19,7 @@ from Agents.random_agent import RandomAgent
 from Agents.threshold_agent import ThresholdAgent
 from Agents.LinearFunctionApproximation_v2 import LFA_agent
 from Agents.deep_q_network import Deep_Q_Agent
+from Agents.baseline_thres import BaselineThresAgent
 from functions.wrappers import StateDiscretize, ActionDiscretize, PricesAddition
 from gym.wrappers.frame_stack import FrameStack,LazyFrames
 from gym.wrappers.flatten_observation import FlattenObservation
@@ -64,7 +65,7 @@ def make_envs(my_dict):
     """
     final_envs = dict()
     for env_name, vals in my_dict["Environments"].items():
-        envir = create_parameters(env_name, vals)
+        envir = create_parameters(vals["type"], vals)
         wrapped_env = create_wrappers(envir, vals)
         final_envs[env_name] = wrapped_env
     return final_envs
@@ -186,7 +187,7 @@ def filter_list(res_list, alpha=0.9):
     return filtered_list
 
 
-def plot_performance(envs_agents, exp_path):
+def  plot_performance(envs_agents, exp_path):
     """
     Plots all the scores that made each agent on evaluation in training and testing environment
     Args:
@@ -203,8 +204,33 @@ def plot_performance(envs_agents, exp_path):
             for agent in agents:
                 res_list = getattr(agent, "total_" + param + "_rewards")
                 plt.plot(filter_list(res_list, alpha=0.9), label=agent.name)
+                plt.xlabel('Simulation Steps')
+                plt.ylabel('Return (€)')
             plt.legend()
-            plt.savefig(exp_path + "/Cumulative rewards on evaluation in " + env + " for " + param + ".png")
+            plt.savefig(exp_path + "/Cumulative rewards on evaluation in " + env + " for " + param + ".png",bbox_inches='tight')
+
+def plot_env_performance(envs_agents, exp_path):
+    """
+    Plots all the scores that made each agent on evaluation in training and testing environment
+    Args:
+        :param envs_agents: dictionary with environments and agents from json file
+        :param exp_path: path to save the results
+    Returns:
+        :return: saves the figures in the directory
+    """
+    for param in ["train", "test"]:
+        plt.figure()
+        plt.title(param+"ing performance")
+        for env, agents in envs_agents.items():
+            for agent in agents:
+                plt.suptitle(agent.name+" cumulative rewards on evaluation ", fontsize='small')
+                dt=getattr(agent,param +"_env").spec._kwargs["Dt"]
+                res_list = getattr(agent, "total_" + param + "_rewards")
+                plt.plot(filter_list(res_list, alpha=0.9), label=dt)
+                plt.xlabel('Simulation Steps')
+                plt.ylabel('Return (€)')
+        plt.legend()
+        plt.savefig(exp_path + "/Cumulative rewards on evaluation for " + param + ".png",bbox_inches='tight')
 
 
 def plot_evaluation_traces(agent, exp_path):
@@ -235,7 +261,7 @@ def plot_evaluation_traces(agent, exp_path):
         ax3.plot(rewards)
         env = getattr(agent, param + "_env")
         plt.savefig('%s/%s agent of type %s on %s for %d episodes with learning rate %s and gamma %s for %s.png' % (
-            exp_path, agent.name, agent.type, env.spec.id, agent.num_episodes, agent.lr, agent.gamma, param))
+            exp_path, agent.name, agent.type, env.spec.id, agent.num_episodes, agent.lr, agent.gamma, param),bbox_inches='tight',pad_inches=0.9)
 
 
 def run(envs_agents, exp_path):

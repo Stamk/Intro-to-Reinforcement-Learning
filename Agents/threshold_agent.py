@@ -19,8 +19,8 @@ class ThresholdAgent(Agent):
         self.evaluate()
 
     def optimizer(self, x):
-        res = scipy.optimize.minimize(self.eval, x, method=self.method, bounds=[[-300, 300], [-300, 300]],
-                                      options={'disp': True}, tol=0.0000001)
+        res = scipy.optimize.minimize(self.eval, x, method=self.method,options={'disp': True}, tol=0.0000001)
+        print(res.x)
         return res.x
 
     def choose_best_action(self, state,env):
